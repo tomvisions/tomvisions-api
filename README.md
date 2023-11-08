@@ -1,4 +1,4 @@
-# MamboleoFC API
+# TomVisions API
 
 In this repository is the code for the MambleoFC APi. It serves as the backend REST API code for the MamboleoFC Website.
 
@@ -6,7 +6,7 @@ In order to set this up to work on it, there are a few steps that need to be don
 
 1) Cloning the repository
 ```sh
-    git clone https://github.com/tomvisions/mamboleofc-api.git && cd mamboleofc-api
+    git clone https://github.com/tomvisions/tomvisions-api.git && cd mamboleofc-api
  ```
 2) Create an .env file and place the following variables
 ```sh
