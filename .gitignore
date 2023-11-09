@@ -5,3 +5,5 @@ dist
 .env-production
 .env*
 api-gateway-event.json
+boot.
+.history

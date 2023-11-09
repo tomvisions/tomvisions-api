@@ -25,6 +25,33 @@ export class GalleryMapper extends BaseMapper {
     private _LIST_NAME: string = 'galleries';
 
 
+
+    public async getAllImages(params) { //: Promise<string[] | string> {
+        let offset;
+
+        try {             
+                if (params.pageIndex === 1) {
+                    offset = 1;
+                } else {
+                    offset = params.pageIndex * params.pageSize;
+                }
+                const imagesConfig = {
+                    offset: offset,
+                    limit : params.pageSize,
+                    
+                }
+
+                return await Image.findAll(imagesConfig).then(images => {
+                    return this.processArray(images);
+                }).catch(err => {
+                    return err;
+                })
+            } catch (error) {
+
+                return error.toString();
+            }
+        }
+
     public async getAllGalleries(options: GalleryOptions) { //: Promise<string[] | string> {
         try {
             
@@ -69,6 +96,26 @@ export class GalleryMapper extends BaseMapper {
             }
         }
 
+    /**
+     * 
+     * @param options 
+     * @returns 
+     */
+    public async getGalleryById(options: ImageOptions) {
+        try {
+            const gallery = {
+                where: { name: options.gallery_id }
+            }
+
+            return await Gallery.findAll(gallery).then(data => {
+                return data[0];
+            }).catch(err => {
+                return err;
+            })
+        } catch (error) {
+            console.log(`Could not fetch gallery ${error}`)
+        }
+    }
 
     /**
      * 

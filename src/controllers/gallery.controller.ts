@@ -2,6 +2,36 @@ import {galleryMapper, ImageOptions, GalleryOptions} from "../mapper/";
 
 export class GalleryController {
 
+
+    apiGetAllImages
+    /**
+     * Calling all galleries
+     * @param req
+     * @param res
+     * @param next
+     */
+    public static async apiGetAllImages(req: any, res: any, next: any) {
+        try {
+    //        if (!galleryMapper.checkAuthenication(req.headers.authorization)) {
+        //        return res.status(500).json({error: 'Not Authorized to access the API'})
+      //      }  
+             console.log(req.body);   
+            const images = await galleryMapper.getAllImages(req.body);
+
+            if (typeof images === 'string') {
+                return res.status(500).json({errors_string: images})
+            }
+
+            const paginationResults = galleryMapper.prepareListResults(images, req.query);
+
+            return res.status(200).json(paginationResults);
+       
+        } catch (error) {
+            res.status(500).json({error_main: error.toString()})
+        }
+
+    }
+
     /**
      * Calling all galleries
      * @param req
@@ -13,7 +43,7 @@ export class GalleryController {
     //        if (!galleryMapper.checkAuthenication(req.headers.authorization)) {
         //        return res.status(500).json({error: 'Not Authorized to access the API'})
       //      }
-/*            const options:GalleryOptions = {primary:false};
+            const options:GalleryOptions = {primary:false};
   
             if (req.query.gallery_slug) {
                 options.primary = true;
@@ -26,7 +56,10 @@ export class GalleryController {
             }
 
             const paginationResults = galleryMapper.prepareListResults(galleries, req.query);
-*/
+
+        return res.status(200).json(paginationResults);
+
+/*
             return res.status(200).json({
                 "galleries": [
                     {
@@ -61,7 +94,7 @@ export class GalleryController {
                 }
             });
            // return res.status(200).json(paginationResults);
-
+*/
         } catch (error) {
             res.status(500).json({error_main: error.toString()})
         }
@@ -98,6 +131,35 @@ export class GalleryController {
         } catch (error) {
             res.status(500).json({error_main: error.toString()})
         }
+    }
 
+      /**
+     * Calling all galleries
+     * @param req
+     * @param res
+     * @param next
+     */
+      public static async apiGetGalleryBySlug(req: any, res: any, next: any) {
+        try {
+    //        if (!galleryMapper.checkAuthenication(req.headers.authorization)) {
+        //        return res.status(500).json({error: 'Not Authorized to access the API'})
+      //      }
+            const options:ImageOptions = {gallery_id: "string" };
+
+            if (req.params.slug) {
+                options.gallery_id = req.params.slug;
+            }
+
+            const gallery = await galleryMapper.getGalleryById(options);
+
+            if (typeof gallery === 'string') {
+                return res.status(500).json({errors_string: gallery})
+            }
+
+            return res.status(200).json(gallery);
+
+        } catch (error) {
+            res.status(500).json({error_main: error.toString()})
+        }
     }
 }

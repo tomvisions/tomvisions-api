@@ -116,7 +116,7 @@ export class BaseMapper {
             };
         }
 
-        return JSON.parse(`{"${this['_LIST_NAME']}":${JSON.stringify(list)}, "pagination": ${JSON.stringify(pagination)}}`);
+        return JSON.parse(`{"data":${JSON.stringify(list)}, "pagination": ${JSON.stringify(pagination)}}`);
     }
 
     public generateJWTToken() {
