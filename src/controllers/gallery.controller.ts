@@ -3,7 +3,60 @@ import {galleryMapper, ImageOptions, GalleryOptions} from "../mapper/";
 export class GalleryController {
 
 
-    apiGetAllImages
+    apiCreateTag
+
+
+    /**
+     * Calling all galleries
+     * @param req
+     * @param res
+     * @param next
+     */
+  public static async apiCreateTag(req: any, res: any, next: any) {
+    try {
+//        if (!galleryMapper.checkAuthenication(req.headers.authorization)) {
+    //        return res.status(500).json({error: 'Not Authorized to access the API'})
+  //      }  
+        const tag = await galleryMapper.createTag(req.body);
+
+        if (typeof tag === 'string') {
+            return res.status(500).json({errors_string: tag})
+        }
+
+        return res.status(200).json(tag);
+   
+    } catch (error) {
+        res.status(500).json({error_main: error.toString()})
+    }
+
+}
+  /**
+     * Calling all galleries
+     * @param req
+     * @param res
+     * @param next
+     */
+  public static async apiGetAllTags(req: any, res: any, next: any) {
+    try {
+//        if (!galleryMapper.checkAuthenication(req.headers.authorization)) {
+    //        return res.status(500).json({error: 'Not Authorized to access the API'})
+  //      }  
+        const images = await galleryMapper.getAllTags(req.body);
+
+        if (typeof images === 'string') {
+            return res.status(500).json({errors_string: images})
+        }
+
+        const paginationResults = galleryMapper.prepareListResults(images, req.query);
+
+        return res.status(200).json(paginationResults);
+   
+    } catch (error) {
+        res.status(500).json({error_main: error.toString()})
+    }
+
+}
+
     /**
      * Calling all galleries
      * @param req
@@ -15,7 +68,7 @@ export class GalleryController {
     //        if (!galleryMapper.checkAuthenication(req.headers.authorization)) {
         //        return res.status(500).json({error: 'Not Authorized to access the API'})
       //      }  
-             console.log(req.body);   
+         
             const images = await galleryMapper.getAllImages(req.body);
 
             if (typeof images === 'string') {
@@ -114,8 +167,8 @@ export class GalleryController {
       //      }
             const options:ImageOptions = {gallery_id: "string" };
 
-            if (req.params.slug) {
-                options.gallery_id = req.params.slug;
+            if (req.params.id) {
+                options.gallery_id = req.params.id;
             }
 
             const galleries = await galleryMapper.getImagesByGallery(options);
@@ -139,15 +192,15 @@ export class GalleryController {
      * @param res
      * @param next
      */
-      public static async apiGetGalleryBySlug(req: any, res: any, next: any) {
+      public static async apiGetGalleryById(req: any, res: any, next: any) {
         try {
     //        if (!galleryMapper.checkAuthenication(req.headers.authorization)) {
         //        return res.status(500).json({error: 'Not Authorized to access the API'})
       //      }
             const options:ImageOptions = {gallery_id: "string" };
 
-            if (req.params.slug) {
-                options.gallery_id = req.params.slug;
+            if (req.params.id) {
+                options.gallery_id = req.params.id;
             }
 
             const gallery = await galleryMapper.getGalleryById(options);
@@ -156,6 +209,28 @@ export class GalleryController {
                 return res.status(500).json({errors_string: gallery})
             }
 
+            gallery.dataValues['tags'] = [];
+
+            const tagsArray = await galleryMapper.getAllTags({pageIndex:1, pageSize: 30});
+        
+            console.log('aar');
+            console.log(tagsArray);
+
+            const tags = tagsArray.map((tag) => {
+                return {value: tag.id, label: tag.name}
+            })    
+
+            gallery.dataValues['tagList'] = tags;
+
+
+            const galleryTagsArray = await galleryMapper.getAllTagsForGallery(options);
+             
+            if (galleryTagsArray) {
+                gallery.dataValues['tags'] = galleryTagsArray.map((tags) => {
+                    return {label: tags.name, value: tags.id}
+                });
+            } 
+            console.log(gallery);
             return res.status(200).json(gallery);
 
         } catch (error) {
