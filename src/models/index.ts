@@ -4,3 +4,4 @@ export * from "./Image";
 export * from "./Gallery";
 export * from "./Tag";
 export * from "./GalleryTag";
+export * from "./User";

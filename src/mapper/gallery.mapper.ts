@@ -36,9 +36,9 @@ export class GalleryMapper extends BaseMapper {
                 updatedAt: moment().format('YYYY-MM-DD'),
             };
 
-            return await Tag.findOrCreate({ where: { id: params.id }, defaults: tag });
+            return await Tag.findOrCreate({ where: { name: params.name }, defaults: tag });
         } catch (error) {
-
+            console.log(error);
             return error.toString();
         }
     }
@@ -62,12 +62,11 @@ export class GalleryMapper extends BaseMapper {
                     '$gallery_tag.gallery_id$': options.gallery_id
                 },
                 //  'gallery_tag.gallery': '975f63c6-8a0f-4536-a126-ffdde09c217c'
-
-                //        group: ['gallery_tag.gallery_id']
+              //  group: ['gallery_tag.tag_id']
 
             }
-//            console.log('the gallery');
-  //          console.log(gallery);
+            //            console.log('the gallery');
+            //          console.log(gallery);
 
             return await Tag.findAll(gallery).then(data => {
                 return data[0];
@@ -84,8 +83,9 @@ export class GalleryMapper extends BaseMapper {
         let offset;
 
         try {
+            console.log('all tags');
             if (params.pageIndex === 1) {
-                offset = 1;
+                offset = 0;
             } else {
                 offset = params.pageIndex * params.pageSize;
             }
@@ -94,6 +94,7 @@ export class GalleryMapper extends BaseMapper {
                 limit: params.pageSize,
 
             }
+            console.log(tagConfig);
 
             return await Tag.findAll(tagConfig).then(images => {
                 return this.processArray(images);
@@ -111,7 +112,7 @@ export class GalleryMapper extends BaseMapper {
 
         try {
             if (params.pageIndex === 1) {
-                offset = 1;
+                offset = 0;
             } else {
                 offset = params.pageIndex * params.pageSize;
             }
@@ -181,23 +182,84 @@ export class GalleryMapper extends BaseMapper {
      * @param options 
      * @returns 
      */
+    public async updateGalleryById(options: ImageOptions, body) {
+        try {
+            return await Gallery.findOrCreate({ where: { id: options.gallery_id } }).then(data => {
+                return data[0]
+            }).catch(err => {
+                    return err;
+                })
+        } catch (error) {
+            return error.toString();
+        }
+    }
+
+    /**
+     * 
+     * @param options 
+     * @returns 
+     */
+    public async updateGallery(options: ImageOptions, body) {
+        try {
+            const gallery = await this.updateGalleryById(options, body);
+            gallery.description = body.description
+            gallery.save();
+
+
+            await this.deleteGalleryTagsByParams({where: { gallery_id: options.gallery_id }})
+            
+            body.tags.map(async (tag) => {
+                console.log('the tag');
+                console.log(tag);
+                console.log('the gallery');
+                console.log(gallery.id);    
+                await this.createGalleryTag(gallery.id, tag);
+            });
+             
+
+            return true;
+        } catch (error) {
+            return error.toString();
+        }
+    }
+
+    private async createGalleryTag(gallery_id, tag_id) {
+        try {
+            const tag = {
+                gallery_id: gallery_id,
+                tag_id: tag_id,
+                createdAt: moment().format('YYYY-MM-DD'),
+                updatedAt: moment().format('YYYY-MM-DD'),
+            };
+
+            return await GalleryTag.findOrCreate({ where: { gallery_id: gallery_id }, defaults: tag });
+        } catch (error) {
+            console.log('the error');
+            console.log(error);
+            return error.toString();
+        }
+    }
+
+    private async deleteGalleryTagsByParams(where) {
+        try {
+            await GalleryTag.destroy(where);
+
+            return true;
+        } catch (error) {
+            return error.toString();
+        }
+
+    }
+
+
+    /**
+     * 
+     * @param options 
+     * @returns 
+     */
     public async getGalleryById(options: ImageOptions) {
         try {
-
-            const gallery = {
-                where: { id: options.gallery_id },
-                /*      include:[
-                        { model:Tag, as:'tags', 
-                          where:{ 
-                                is_valid:1, 
-                                is_vertify:1},   
-                          required:false
-                          }
-                        ]
-                     } */
-            }
-
-            return await Gallery.findAll(gallery).then(data => {
+            return await Gallery.findOrCreate({ where: { id: options.gallery_id } }).then(data => {
                 return data[0];
             }).catch(err => {
                 return err;

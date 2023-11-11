@@ -5,6 +5,9 @@ const mediaRouter = expressRouter.Router();
 import {GalleryController} from "../controllers/gallery.controller";
 
 mediaRouter.get("/id/:id", GalleryController.apiGetGalleryById);
+mediaRouter.put("/id/:id", GalleryController.apiUpdateGalleryById);
+
+
 mediaRouter.get("/id/:id/images", GalleryController.apiGetAllImagesByGallery);
 
 mediaRouter.get("/primary", GalleryController.apiGetAllGalleries);

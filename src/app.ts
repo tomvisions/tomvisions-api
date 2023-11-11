@@ -6,7 +6,7 @@ import { getCurrentInvoke } from "@vendia/serverless-express";
 const ejs = require("ejs").__express;
 const app = express();
 const router = express.Router();
-import {mailRouter, mediaRouter} from './routes';
+import {mailRouter, mediaRouter, userRouter} from './routes';
 
 
 const fileUpload = require('express-fileupload');
@@ -30,6 +30,8 @@ app.use(async (req, res, next) => {
 
 app.use("/api/v1/mail", mailRouter);
 app.use("/api/v1/media", mediaRouter);
+app.use("/api/v1/user", userRouter);
+
 
 app.use("/", express);
 export { app };

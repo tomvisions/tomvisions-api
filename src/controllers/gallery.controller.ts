@@ -1,3 +1,4 @@
+import { Gallery } from "src/models";
 import {galleryMapper, ImageOptions, GalleryOptions} from "../mapper/";
 
 export class GalleryController {
@@ -186,8 +187,41 @@ export class GalleryController {
         }
     }
 
+
       /**
-     * Calling all galleries
+     * Updating gallery based on ID
+     * @param req
+     * @param res
+     * @param next
+     */
+      public static async apiUpdateGalleryById(req: any, res: any, next: any) {
+        try {
+    //        if (!galleryMapper.checkAuthenication(req.headers.authorization)) {
+        //        return res.status(500).json({error: 'Not Authorized to access the API'})
+      //      }
+            const options:ImageOptions = {gallery_id: "string" };
+
+            if (req.params.id) {
+                options.gallery_id = req.params.id;
+            }
+            console.log(options);
+            console.log(req.body);
+            const gallery = await galleryMapper.updateGallery(options, req.body);
+
+            if (typeof gallery === 'string') {
+                return res.status(500).json({errors_string: gallery})
+            }
+
+            console.log(gallery);
+            return res.status(200).json(gallery);
+
+        } catch (error) {
+            res.status(500).json({error_main: error.toString()})
+        }
+    }
+
+      /**
+     * Retreiving gallery based on id
      * @param req
      * @param res
      * @param next
@@ -209,28 +243,36 @@ export class GalleryController {
                 return res.status(500).json({errors_string: gallery})
             }
 
-            gallery.dataValues['tags'] = [];
+           // gallery.dataValues['tags'] = [];
 
             const tagsArray = await galleryMapper.getAllTags({pageIndex:1, pageSize: 30});
         
-            console.log('aar');
-            console.log(tagsArray);
-
             const tags = tagsArray.map((tag) => {
                 return {value: tag.id, label: tag.name}
             })    
 
             gallery.dataValues['tagList'] = tags;
 
-
             const galleryTagsArray = await galleryMapper.getAllTagsForGallery(options);
-             
-            if (galleryTagsArray) {
-                gallery.dataValues['tags'] = galleryTagsArray.map((tags) => {
-                    return {label: tags.name, value: tags.id}
-                });
-            } 
-            console.log(gallery);
+      
+            if (typeof galleryTagsArray === "object") {
+                gallery.dataValues['tags'] = [{label: galleryTagsArray.name, value: galleryTagsArray.id}]
+            } else {
+
+            }
+/*             console.log(typeof galleryTagsArray);
+            console.log(galleryTagsArray);
+            const galleryTags = galleryTagsArray.Tag.map((tags) => {
+                console.log(tags);
+                return {label: tags.name, value: tags.id}
+            });
+
+
+            console.log(galleryTags);
+
+            
+            gallery.dataValues['tags'] = galleryTags;
+*/
             return res.status(200).json(gallery);
 
         } catch (error) {
