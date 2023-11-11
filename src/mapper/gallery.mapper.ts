@@ -62,7 +62,7 @@ export class GalleryMapper extends BaseMapper {
                     '$gallery_tag.gallery_id$': options.gallery_id
                 },
                 //  'gallery_tag.gallery': '975f63c6-8a0f-4536-a126-ffdde09c217c'
-              //  group: ['gallery_tag.tag_id']
+                //  group: ['gallery_tag.tag_id']
 
             }
             //            console.log('the gallery');
@@ -78,6 +78,49 @@ export class GalleryMapper extends BaseMapper {
         }
     }
 
+    /**
+     * Update image based on Id
+     * @param id 
+     * @param body 
+     * @returns 
+     */
+    public async updateImageById(id, body) {
+        try {
+            const image = await Image.findOrCreate({ where: { id: id }, defualts: body }).then(data => {
+
+
+                return data[0]
+            }).catch(err => {
+                return err;
+            })
+
+            image.description = body.description;
+            image.primaryImage = body.primaryImage
+            image.save();
+
+            return true;
+        } catch (error) {
+            return error.toString();
+        }
+    }
+
+      /**
+     * Get image based on Id
+     * @param id
+     * @pparam body 
+     * @returns 
+     */
+      public async getImageById(id, body) {
+        try {
+            return await Image.findOrCreate({ where: { id: id } , defaults: body}).then(data => {
+                return data[0];
+            }).catch(err => {
+                return err;
+            })
+        } catch (error) {
+            return error.toString();
+        }
+    }
 
     public async getAllTags(params) { //: Promise<string[] | string> {
         let offset;
@@ -187,8 +230,8 @@ export class GalleryMapper extends BaseMapper {
             return await Gallery.findOrCreate({ where: { id: options.gallery_id } }).then(data => {
                 return data[0]
             }).catch(err => {
-                    return err;
-                })
+                return err;
+            })
         } catch (error) {
             return error.toString();
         }
@@ -206,16 +249,16 @@ export class GalleryMapper extends BaseMapper {
             gallery.save();
 
 
-            await this.deleteGalleryTagsByParams({where: { gallery_id: options.gallery_id }})
-            
+            await this.deleteGalleryTagsByParams({ where: { gallery_id: options.gallery_id } })
+
             body.tags.map(async (tag) => {
                 console.log('the tag');
                 console.log(tag);
                 console.log('the gallery');
-                console.log(gallery.id);    
+                console.log(gallery.id);
                 await this.createGalleryTag(gallery.id, tag);
             });
-             
+
 
             return true;
         } catch (error) {

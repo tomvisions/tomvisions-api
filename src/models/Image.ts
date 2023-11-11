@@ -18,6 +18,9 @@ Image.init({
     name: {
         type: DataTypes.STRING,
     },
+    primaryImage: {
+        type: DataTypes.boolean,
+    },
     createdAt: {
         type: DataTypes.DATE,
     },

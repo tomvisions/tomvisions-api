@@ -5,12 +5,14 @@ import {User} from "../models";
 //import { User} from "../models";
 import {or} from "../db";
 import dotenv from 'dotenv';
-
+import * as uuid from 'uuid';
+import moment from "moment";
+import { get } from "lodash";
 export class UserMapper extends BaseMapper {
     private _PARAMS_ID: string = 'id';
     private _PARAMS_EMAIL: string = 'email';
     private _PARAMS_PASSWORD: string = 'password';
-    private _PARAMS_USERNAME: string = 'username';
+    private _PARAMS_USERNAME: string = 'userName';
     private _PARAMS_USER: string = 'user';
     private _LIST_NAME: string = 'users';
     private _DEFAULT_SORT: string = 'username';
@@ -40,24 +42,30 @@ export class UserMapper extends BaseMapper {
 
     public async apiSignUp(params) {
         try {
+            const userDefaults = {
+                id: uuid.v4(),
+                userName: params.userName,
+                email: params.email,
+                password: params.password,
+                createdAt: moment().format('YYYY-MM-DD'),
+                updatedAt: moment().format('YYYY-MM-DD')
+            }
 
-            const result = await User.findOrCreate({
-                where: or(JSON.parse(params)),
-                defaults: JSON.parse(params),
-            }).then(data => {
+          //  console.log('the params');
+          //  console.log(params);
+            console.log(userDefaults);
+            return await User.findOrCreate({ where: { userName: params.userName },  defaults: userDefaults })
+            //const result = await User.findOrCreate(user, defaults: userDefaults
+            .then(data => {
 
-                return false;
+                return data;
 
             }).catch(data => {
 
-                return true;
+                return data;
             });
-
-            return result;
-
         } catch (error) {
-            console.log(`Could not fetch users ${error}`);
-            return false;
+            return error.toString;
         }
     }
 
@@ -70,31 +78,19 @@ export class UserMapper extends BaseMapper {
             // get config vars
             dotenv.config();
             const userParams = {
+                raw: true,
                 where: {
                     password: params.password,
                     userName: params.userName
                 },
             };
 
+            console.log(userParams);
             return await User.findOrCreate(userParams).then(data => {
-                if (data.length === 1) {
-                    return {
-                        user: {
-                            username: data[0].username,
-                            email: data[0].email,
-                            access: {
-                                name: data[0].access.dataValues.name,
-                                level: data[0].access.dataValues.level,
-                                slug: data[0].access.dataValues.slug
-                            }
-                        },
-                        accessToken: this.generateJWTToken(),
-                        tokenType: 'bearer',
-                    }
-                } else {
-
-                    return false;
-                }
+                return data[0];
+//                data[0].accessToken = this.generateJWTToken();
+            }).catch(data => {
+                return data;
             });
         } catch (error) {
             console.log(`Could not fetch users ${error}`)

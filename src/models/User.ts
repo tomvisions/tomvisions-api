@@ -11,7 +11,6 @@ class User extends Model {
 User.init({
     id: {
         type: DataTypes.STRING,
-        autoIncrement: true,
         primaryKey: true
     },
     userName: {
@@ -30,7 +29,7 @@ User.init({
         type: DataTypes.DATE,
     },
 }, {
-    sequelize, tableName: "user"
+    modelName: 'User', sequelize, tableName: "user"
 });
 
 export {User}
