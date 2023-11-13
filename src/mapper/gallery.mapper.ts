@@ -15,7 +15,7 @@ export interface ImageOptions {
 }
 
 export interface GalleryOptions {
-    primary?: boolean;
+    section?: string;
 }
 
 export class GalleryMapper extends BaseMapper {
@@ -86,7 +86,7 @@ export class GalleryMapper extends BaseMapper {
      */
     public async updateImageById(id, body) {
         try {
-            const image = await Image.findOrCreate({ where: { id: id }, defualts: body }).then(data => {
+            const image = await Image.findOrCreate({ where: { id: id }, defaults: body }).then(data => {
 
 
                 return data[0]
@@ -94,25 +94,46 @@ export class GalleryMapper extends BaseMapper {
                 return err;
             })
 
-            image.description = body.description;
-            image.primaryImage = body.primaryImage
-            image.save();
+            console.log('the response');
+         
+            console.log(image);
+                        image.description = body.description;
+                  image.primaryImage = body.primaryImage
+                    image.save();
 
-            return true;
+            return image;
         } catch (error) {
             return error.toString();
         }
     }
 
-      /**
-     * Get image based on Id
-     * @param id
-     * @pparam body 
-     * @returns 
-     */
-      public async getImageById(id, body) {
+    /**
+   * Get image based ons Id
+   * @param id
+   * @pparam body 
+   * @returns 
+   */
+    public async getImageById(id, body) {
         try {
-            return await Image.findOrCreate({ where: { id: id } , defaults: body}).then(data => {
+
+            const imageConfig = {
+       /*         include: [{
+                    association: GalleryTag.Tag,
+                    required: true
+                },
+                {
+                    association: GalleryTag.Tag,
+                    required: true
+                }
+            ], */
+                where: {
+                    id: id
+                },
+            }
+
+            console.log(imageConfig);
+            return await Image.findOrCreate(imageConfig).then(data => {
+                console.log(data);
                 return data[0];
             }).catch(err => {
                 return err;
@@ -176,20 +197,62 @@ export class GalleryMapper extends BaseMapper {
         }
     }
 
-    public async getAllGalleries(options: GalleryOptions) { //: Promise<string[] | string> {
+
+    public async getAllPrimaryImages(options: GalleryOptions) { //: Promise<string[] | string> {
         try {
 
             let gallery = {}
-            if (options.primary) {
+            if (options.section) {
 
                 gallery = {
                     include: [{
-                        mode: Image,
+                        association: Image.Gallery,
                         required: true,
-                        where: { primary: true }
-                    }]
+                    },
+                    {
+                        association: Gallery.GalleryTag,
+                        required: true,
+                    }],
+                    where: {
+                        '$image.primaryImage$':1
+                    },
                 }
             }
+
+            //     paramsWhere = JSON.parse(
+            //       `{
+            //      "slug":"${options.gallery.slug}"
+            //  }`)
+            //  } else {
+            //     paramsWhere = {};
+            /*}        
+                return await Image.findAll(paramsWhere).then(images => {
+                    return this.processArray(images);
+                    //     console.log(images);
+                    //   return images;
+                }).catch(err => {
+                    return err;
+                })
+ 
+            }
+*/
+            // console.log(paramsWhere);
+            console.log(gallery);
+            return await Gallery.findAll(gallery).then(galleries => {
+                return this.processArray(galleries);
+            }).catch(err => {
+                return err;
+            })
+        } catch (error) {
+
+            return error.toString();
+        }
+    }
+
+    public async getAllGalleries() { //: Promise<string[] | string> {
+        try {
+
+            let gallery = {}
 
             //     paramsWhere = JSON.parse(
             //       `{

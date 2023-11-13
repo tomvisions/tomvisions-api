@@ -1,7 +1,8 @@
 "use strict";
 
 const {DataTypes, Model, sequelize} = require('../db');
-
+import { Image } from ".";
+import { GalleryTag } from "./GalleryTag";
 class Gallery extends Model {}
 
 Gallery.init({
@@ -27,5 +28,8 @@ Gallery.init({
 }, {
     modelName: 'Gallery', sequelize: sequelize, tableName:"gallery"
 });
+//GalleryTag.Tag = Tag.hasMany(GalleryTag,  {sourceKey: "id", as: "gallery_tag",  foreignKey: 'tag_id', onUpdate: 'cascade'})
+Gallery.GalleryTag = GalleryTag.hasMany(Gallery,  {sourceKey: "gallery_id", as: "gallery_tag",  foreignKey: 'id', onUpdate: 'cascade'})
+
 
 export {Gallery}
