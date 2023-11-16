@@ -2,6 +2,7 @@
 
 const {DataTypes, Model, sequelize} = require('../db');
 import { Gallery } from "./Gallery";
+import { GalleryTag } from "./GalleryTag";
 class Image extends Model {}
 
 Image.init({
@@ -12,7 +13,7 @@ Image.init({
     key: {
         type: DataTypes.STRING,
     },
-    gallery_id: {
+    GalleryId: {
         type: DataTypes.STRING,
     },
     name: {
@@ -33,7 +34,23 @@ Image.init({
 }, {
     modelName: 'Image', sequelize: sequelize, tableName:"image"
 });
+//Image.belongsTo(Gallery)
+Image.Gallery = Image.hasOne(Gallery,  {sourceKey: "GalleryId", as: "gallery", foreignKey: 'id', onUpdate: 'cascade'})
+Image.GalleryTag = Image.belongsToMany(GalleryTag, { through: Gallery, throughAssociations: {
+    // 1️⃣ The name of the association going from the source model (Person)
+    // to the through model (LikedToot)
+    fromSource: Gallery,
+    
+    // 2️⃣ The name of the association going from the through model (LikedToot) 
+    // to the source model (Person)
+    toSource: GalleryTag,
+    
+    // 3️⃣ The name of the association going from the target model (Toot)
+    // to the through model (LikedToot)
+    fromTarget: 'gallery_id',
 
-Image.Gallery = Gallery.hasOne(Image,  {sourceKey: "id", as: "image", foreignKey: 'id', onUpdate: 'cascade'})
-
+    // 4️⃣ The name of the association going from the through model (LikedToot)
+    // to the target model (Toot)
+    toTarget: 'gallery_id',
+  },} ); 
 export {Image}

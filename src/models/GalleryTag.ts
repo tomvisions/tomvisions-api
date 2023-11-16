@@ -7,11 +7,11 @@ const {DataTypes, Model, sequelize} = require('../db');
 class GalleryTag extends Model {}
 
 GalleryTag.init({
-    tag_id: {
+    TagId: {
         type: DataTypes.STRING,
         primaryKey: true
     },
-    gallery_id: {
+    GalleryId: {
         type: DataTypes.STRING,
     },
     createdAt: {
@@ -30,7 +30,9 @@ GalleryTag.init({
   //  }
 //});
 
-GalleryTag.Tag = Tag.hasMany(GalleryTag,  {sourceKey: "id", as: "gallery_tag",  foreignKey: 'tag_id', onUpdate: 'cascade'})
+GalleryTag.Tag = Tag.hasMany(GalleryTag,  {sourceKey: "id", as: "gallery_tag",  foreignKey: 'TagId', onUpdate: 'cascade'})
+
+//Gallery.GalleryTag = Gallery.hasMany(GalleryTag,{sourceKey: "id", as: "gallery_tag", foreignKey: 'gallery_id', onUpdate: 'cascade'} )
 ///Tag.GalleryTag = Tag.hasMany(GalleryTag,  {sourceKey: "id", as: "gallery_tag",  foreignKey: 'tag_id', onUpdate: 'cascade'})
 
 //User.TeamUser = User.hasMany(TeamUser, {as: 'teams', foreignKey: 'UserId', onUpdate: 'cascade'});

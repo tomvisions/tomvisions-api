@@ -3,25 +3,29 @@ import expressRouter from 'express';
 const mediaRouter = expressRouter.Router();
 
 import {GalleryController} from "../controllers/gallery.controller";
+import { ImageController } from '../controllers/image.controller';
+import { TagController } from '../controllers/tag.controller';
 
 mediaRouter.get("/id/:id", GalleryController.apiGetGalleryById);
 mediaRouter.put("/id/:id", GalleryController.apiUpdateGalleryById);
 
 
-mediaRouter.get("/id/:id/images", GalleryController.apiGetAllImagesByGallery);
+mediaRouter.get("/id/:id/images", ImageController.apiGetAllImagesByGallery);
 
-mediaRouter.get("/primary", GalleryController.apiGetAllPrimaryImages);
-mediaRouter.get("/primary/section/:section", GalleryController.apiGetAllPrimaryImages);
+mediaRouter.get("/primary", ImageController.apiGetAllPrimaryImages);
+mediaRouter.get("/primary/section/:section", ImageController.apiGetAllPrimaryImages);
 
 
 mediaRouter.post("/", GalleryController.apiGetAllGalleries);
-mediaRouter.post("/image", GalleryController.apiGetAllImages);
-mediaRouter.get("/image/id/:id", GalleryController.apiGetImage);
-mediaRouter.put("/image/id/:id", GalleryController.apiUpdateImage);
+mediaRouter.post("/image", ImageController.apiGetAllImages);
+mediaRouter.get("/image/id/:id", ImageController.apiGetImage);
+mediaRouter.put("/image/id/:id", ImageController.apiUpdateImage);
 
 
-mediaRouter.post("/tags", GalleryController.apiGetAllTags);
-mediaRouter.post("/tags/new", GalleryController.apiCreateTag);
+mediaRouter.post("/tag", TagController.apiGetAllTags);
+mediaRouter.post("/tag/list", TagController.apiGetAllTagsAsLabelValues);
+
+mediaRouter.post("/tag/new", TagController.apiCreateTag);
 
 
 export { mediaRouter };

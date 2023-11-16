@@ -1,19 +1,17 @@
 "use strict";
-import { Gallery, Image, Tag, GalleryTag } from "../models/";
+import { Gallery, GalleryTag } from "../models/";
 //import {gallery as Gallery, image as Image} from "../models/";
 import { BaseMapper } from '.';
 import moment from "moment";
 import { hasSubscribers } from "diagnostics_channel";
 import * as uuid from 'uuid';
-
+import { ImageOptions } from ".";
+import { Image } from "../models/";
+import { Tag } from "../models/";
 export interface Options {
     image?: ImageOptions,
     gallery?: GalleryOptions
 }
-export interface ImageOptions {
-    gallery_id?: string;
-}
-
 export interface GalleryOptions {
     section?: string;
 }
@@ -25,277 +23,32 @@ export class GalleryMapper extends BaseMapper {
     private _LIST_NAME: string = 'galleries';
 
 
-    public async createTag(params) { //: Promise<string[] | string> {
 
-        try {
-            const tag = {
-                id: uuid.v4(),
-                name: params.name,
-                description: params.description,
-                createdAt: moment().format('YYYY-MM-DD'),
-                updatedAt: moment().format('YYYY-MM-DD'),
-            };
-
-            return await Tag.findOrCreate({ where: { name: params.name }, defaults: tag });
-        } catch (error) {
-            console.log(error);
-            return error.toString();
-        }
-    }
-
-    /**
- * 
- * @param options 
- * @returns 
- */
-    public async getAllTagsForGallery(options: ImageOptions) {
-        try {
-
-
-            const gallery = {
-                include: [{
-                    model: GalleryTag,
-                    association: GalleryTag.Tag,
-                    required: true
-                }],
-                where: {
-                    '$gallery_tag.gallery_id$': options.gallery_id
-                },
-                //  'gallery_tag.gallery': '975f63c6-8a0f-4536-a126-ffdde09c217c'
-                //  group: ['gallery_tag.tag_id']
-
-            }
-            //            console.log('the gallery');
-            //          console.log(gallery);
-
-            return await Tag.findAll(gallery).then(data => {
-                return data[0];
-            }).catch(err => {
-                return err;
-            })
-        } catch (error) {
-            console.log(`Could not fetch gallery ${error}`)
-        }
-    }
-
-    /**
-     * Update image based on Id
-     * @param id 
-     * @param body 
-     * @returns 
-     */
-    public async updateImageById(id, body) {
-        try {
-            const image = await Image.findOrCreate({ where: { id: id }, defaults: body }).then(data => {
-
-
-                return data[0]
-            }).catch(err => {
-                return err;
-            })
-
-            console.log('the response');
-         
-            console.log(image);
-                        image.description = body.description;
-                  image.primaryImage = body.primaryImage
-                    image.save();
-
-            return image;
-        } catch (error) {
-            return error.toString();
-        }
-    }
-
-    /**
-   * Get image based ons Id
-   * @param id
-   * @pparam body 
-   * @returns 
-   */
-    public async getImageById(id, body) {
-        try {
-
-            const imageConfig = {
-       /*         include: [{
-                    association: GalleryTag.Tag,
-                    required: true
-                },
-                {
-                    association: GalleryTag.Tag,
-                    required: true
-                }
-            ], */
-                where: {
-                    id: id
-                },
-            }
-
-            console.log(imageConfig);
-            return await Image.findOrCreate(imageConfig).then(data => {
-                console.log(data);
-                return data[0];
-            }).catch(err => {
-                return err;
-            })
-        } catch (error) {
-            return error.toString();
-        }
-    }
-
-    public async getAllTags(params) { //: Promise<string[] | string> {
+    public async getAllGalleries(body) { //: Promise<string[] | string> {
         let offset;
-
         try {
-            console.log('all tags');
-            if (params.pageIndex === 1) {
+            if (body.pageIndex === 1) {
                 offset = 0;
             } else {
-                offset = params.pageIndex * params.pageSize;
+                offset = body.pageIndex * body.pageSize;
             }
-            const tagConfig = {
+            const galleryConfig = {
+                attributes: { exclude: ['ImageId', 'GalleryTagTagId'] },
                 offset: offset,
-                limit: params.pageSize,
-
-            }
-            console.log(tagConfig);
-
-            return await Tag.findAll(tagConfig).then(images => {
-                return this.processArray(images);
-            }).catch(err => {
-                return err;
-            })
-        } catch (error) {
-
-            return error.toString();
-        }
-    }
-
-    public async getAllImages(params) { //: Promise<string[] | string> {
-        let offset;
-
-        try {
-            if (params.pageIndex === 1) {
-                offset = 0;
-            } else {
-                offset = params.pageIndex * params.pageSize;
-            }
-            const imagesConfig = {
-                offset: offset,
-                limit: params.pageSize,
+                limit: body.pageSize,
 
             }
 
-            return await Image.findAll(imagesConfig).then(images => {
-                return this.processArray(images);
-            }).catch(err => {
-                return err;
-            })
-        } catch (error) {
+            return await Gallery.findAll(galleryConfig).then(galleries => {
 
-            return error.toString();
-        }
-    }
-
-
-    public async getAllPrimaryImages(options: GalleryOptions) { //: Promise<string[] | string> {
-        try {
-
-            let gallery = {}
-            if (options.section) {
-
-                gallery = {
-                    include: [{
-                        association: Image.Gallery,
-                        required: true,
-                    },
-                    {
-                        association: Gallery.GalleryTag,
-                        required: true,
-                    }],
-                    where: {
-                        '$image.primaryImage$':1
-                    },
-                }
-            }
-
-            //     paramsWhere = JSON.parse(
-            //       `{
-            //      "slug":"${options.gallery.slug}"
-            //  }`)
-            //  } else {
-            //     paramsWhere = {};
-            /*}        
-                return await Image.findAll(paramsWhere).then(images => {
-                    return this.processArray(images);
-                    //     console.log(images);
-                    //   return images;
-                }).catch(err => {
-                    return err;
-                })
- 
-            }
-*/
-            // console.log(paramsWhere);
-            console.log(gallery);
-            return await Gallery.findAll(gallery).then(galleries => {
                 return this.processArray(galleries);
             }).catch(err => {
+                console.log('the error');
+                console.log(err);
                 return err;
             })
         } catch (error) {
 
-            return error.toString();
-        }
-    }
-
-    public async getAllGalleries() { //: Promise<string[] | string> {
-        try {
-
-            let gallery = {}
-
-            //     paramsWhere = JSON.parse(
-            //       `{
-            //      "slug":"${options.gallery.slug}"
-            //  }`)
-            //  } else {
-            //     paramsWhere = {};
-            /*}        
-                return await Image.findAll(paramsWhere).then(images => {
-                    return this.processArray(images);
-                    //     console.log(images);
-                    //   return images;
-                }).catch(err => {
-                    return err;
-                })
- 
-            }
-*/
-            // console.log(paramsWhere);
-            return await Gallery.findAll(gallery).then(galleries => {
-                return this.processArray(galleries);
-            }).catch(err => {
-                return err;
-            })
-        } catch (error) {
-
-            return error.toString();
-        }
-    }
-
-    /**
-     * 
-     * @param options 
-     * @returns 
-     */
-    public async updateGalleryById(options: ImageOptions, body) {
-        try {
-            return await Gallery.findOrCreate({ where: { id: options.gallery_id } }).then(data => {
-                return data[0]
-            }).catch(err => {
-                return err;
-            })
-        } catch (error) {
             return error.toString();
         }
     }
@@ -307,12 +60,14 @@ export class GalleryMapper extends BaseMapper {
      */
     public async updateGallery(options: ImageOptions, body) {
         try {
-            const gallery = await this.updateGalleryById(options, body);
+            const gallery = await this.getGalleryById(options);
+            console.log('the gallery');
+            console.log(gallery);
             gallery.description = body.description
             gallery.save();
 
 
-            await this.deleteGalleryTagsByParams({ where: { gallery_id: options.gallery_id } })
+            await this.deleteGalleryTagsByParams({ where: { GalleryId: options.GalleryId } })
 
             body.tags.map(async (tag) => {
                 console.log('the tag');
@@ -329,16 +84,16 @@ export class GalleryMapper extends BaseMapper {
         }
     }
 
-    private async createGalleryTag(gallery_id, tag_id) {
+    private async createGalleryTag(GalleryId, TagId) {
         try {
             const tag = {
-                gallery_id: gallery_id,
-                tag_id: tag_id,
+                GalleryId: GalleryId,
+                TagId: TagId,
                 createdAt: moment().format('YYYY-MM-DD'),
                 updatedAt: moment().format('YYYY-MM-DD'),
             };
 
-            return await GalleryTag.findOrCreate({ where: { gallery_id: gallery_id }, defaults: tag });
+            return await GalleryTag.findOrCreate({ where: [{ GalleryId: GalleryId }, {TagId: TagId}], defaults: tag });
         } catch (error) {
             console.log('the error');
             console.log(error);
@@ -365,38 +120,31 @@ export class GalleryMapper extends BaseMapper {
      */
     public async getGalleryById(options: ImageOptions) {
         try {
-            return await Gallery.findOrCreate({ where: { id: options.gallery_id } }).then(data => {
+            console.log('get gallery');
+
+            const galleryParams = {
+               include: [
+                    {
+                        Model: Tag,         
+                        association: Gallery.Tag,
+                        required: false
+                    },
+                ], 
+                where: { id: options.GalleryId },
+                attributes: {exclude: ['ImageId', 'GalleryTagTagId']},
+            }
+    
+            return await Gallery.findOrCreate(galleryParams).then(data => {
+
                 return data[0];
             }).catch(err => {
+
                 return err;
             })
         } catch (error) {
-            console.log(`Could not fetch gallery ${error}`)
+           return error.toString();
         }
     }
-
-
-    /**
-     * 
-     * @param options 
-     * @returns 
-     */
-    public async getImagesByGallery(options: ImageOptions) {
-        try {
-            const images = {
-                where: { gallery: options.gallery_id }
-            }
-
-            return await Image.findAll(images).then(data => {
-                return this.processArray(data);
-            }).catch(err => {
-                return err;
-            })
-        } catch (error) {
-            console.log(`Could not fetch galleries ${error}`)
-        }
-    }
-
 
     get DEFAULT_SORT(): string {
         return this._DEFAULT_SORT;
