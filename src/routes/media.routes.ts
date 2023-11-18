@@ -10,7 +10,7 @@ mediaRouter.get("/id/:id", GalleryController.apiGetGalleryById);
 mediaRouter.put("/id/:id", GalleryController.apiUpdateGalleryById);
 
 
-mediaRouter.get("/id/:id/images", ImageController.apiGetAllImagesByGallery);
+mediaRouter.get("/id/:id/image", ImageController.apiGetAllImagesByGallery);
 
 mediaRouter.get("/primary", ImageController.apiGetAllPrimaryImages);
 mediaRouter.get("/primary/section/:section", ImageController.apiGetAllPrimaryImages);

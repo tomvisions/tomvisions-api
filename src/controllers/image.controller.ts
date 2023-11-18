@@ -109,15 +109,15 @@ export class ImageController {
             options.section = req.params.section
         }
 
-        const galleries = await imageMapper.getAllPrimaryImages(options);
+        const images = await imageMapper.getAllPrimaryImages(options);
 
-        if (typeof galleries === 'string') {
-            return res.status(500).json({ errors_string: galleries })
+        if (typeof images === 'string') {
+            return res.status(500).json({ errors_string: images })
         }
 
      //   const paginationResults = imageMapper.prepareListResults(galleries, req.query);
 
-        return res.status(200).json(galleries);
+        return res.status(200).json({"images":images});
 
     } catch (error) {
         res.status(500).json({ error_main: error.toString() })

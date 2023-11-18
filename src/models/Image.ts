@@ -39,7 +39,7 @@ Image.Gallery = Image.hasOne(Gallery,  {sourceKey: "GalleryId", as: "gallery", f
 Image.GalleryTag = Image.belongsToMany(GalleryTag, { through: Gallery, throughAssociations: {
     // 1️⃣ The name of the association going from the source model (Person)
     // to the through model (LikedToot)
-    fromSource: Gallery,
+    fromSource: Image,
     
     // 2️⃣ The name of the association going from the through model (LikedToot) 
     // to the source model (Person)
@@ -47,7 +47,7 @@ Image.GalleryTag = Image.belongsToMany(GalleryTag, { through: Gallery, throughAs
     
     // 3️⃣ The name of the association going from the target model (Toot)
     // to the through model (LikedToot)
-    fromTarget: 'gallery_id',
+    fromTarget: 'id',
 
     // 4️⃣ The name of the association going from the through model (LikedToot)
     // to the target model (Toot)

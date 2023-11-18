@@ -1,6 +1,7 @@
 import nJwt from 'njwt';
 import dotenv from "dotenv";
 import * as uuid from 'uuid';
+import { s3Mapper } from './s3.mapper';
 dotenv.config();
 
 export interface PaginationResults {
@@ -21,20 +22,50 @@ The Base Mapper. Functions which are in common with others mappers are placed he
  */
 export class BaseMapper {
     private _QUERY: string;
+    private _PARAM_FRONTCLOUD = 'https://images.mamboleofc.ca'
 
     public async processArray(listing) {
         if (listing.length) {
             const listArray = [];
-
+                
             for (let item of listing) {
                 listArray.push(item.get());
             }
-
+            console.log('the list')
+            console.log(listArray);    
             return listArray;
         }
 
         return [];
     }
+
+    public async processImageArray(listing) {
+        if (listing.length) {
+            const listArray = [];
+                
+            for (let item of listing) {
+                const key = s3Mapper.resizeWithInS3(item.key, {
+                    "resize": {
+                        "width": 400,
+                        "height": 400,
+                        "fit": "inside"
+                    }
+                });
+
+
+                item.key = `${this._PARAM_FRONTCLOUD}/${key}`;
+               
+                listArray.push(item);
+            }
+            console.log('the list')
+            console.log(listArray);    
+            return listArray;
+        }
+
+        return [];
+    }
+
+
 
     /**
      * Preparing the paginated results

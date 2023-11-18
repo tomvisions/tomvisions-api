@@ -2,6 +2,7 @@ import { BaseMapper } from ".";
 import { Image } from "../models";
 import { GalleryOptions } from ".";
 import { Gallery } from "../models/Gallery";
+import { sequelize } from "../db";
 
 
 export interface ImageOptions {
@@ -133,12 +134,19 @@ export class ImageMapper extends BaseMapper {
             }
 */
             // console.log(paramsWhere);
-            console.log(primaryImageConfig);
+            const sql = 'SELECT `Image`.`id`, `Image`.`key`, `Image`.`GalleryId`, `Image`.`name`, `Image`.`description`, `Image`.`primaryImage`, `gallery_tag`.`TagId`, gallery.name, gallery_tag.GalleryId FROM `image` AS `Image` INNER JOIN gallery ON gallery.id = `Image`.`GalleryId` INNER JOIN gallery_tag ON gallery_tag.GalleryId = `Image`.`GalleryId`  WHERE `Image`.`primaryImage` = 1';
+            return await sequelize.query(sql).then(galleries => {
+
+                return this.processImageArray(galleries[0])
+            }).catch(err => {
+                return err;
+            })
+/*            console.log(primaryImageConfig);
             return await Image.findAll(primaryImageConfig).then(galleries => {
                 return this.processArray(galleries);
             }).catch(err => {
                 return err;
-            })
+            }) */
         } catch (error) {
 
             return error.toString();
@@ -153,7 +161,9 @@ export class ImageMapper extends BaseMapper {
     public async getImagesByGallery(options: ImageOptions) {
         try {
             const images = {
-                where: { gallery: options.GalleryId }
+                where: { GalleryId: options.GalleryId },
+                offset: 0,
+                limit: 40,
             }
 
             return await Image.findAll(images).then(data => {
