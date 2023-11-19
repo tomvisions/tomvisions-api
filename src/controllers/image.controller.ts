@@ -82,7 +82,7 @@ export class ImageController {
                 return res.status(500).json({ errors_string: images })
             }
 
-            const paginationResults = imageMapper.prepareListResults(images, req.query);
+            const paginationResults = imageMapper.prepareListResults(images, req.body);
 
             return res.status(200).json(paginationResults);
 

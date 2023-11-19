@@ -17,6 +17,16 @@ export interface Query {
     size?:number;
 }
 
+export interface Body {
+    "pageIndex": number,
+    "pageSize": number,
+    "search": string
+    "sort": {
+        "order": string,
+        "key": string
+    },
+}
+
 /*
 The Base Mapper. Functions which are in common with others mappers are placed here to avoid duplication of code
  */
@@ -29,6 +39,7 @@ export class BaseMapper {
             const listArray = [];
                 
             for (let item of listing) {
+                console.log(item.get)
                 listArray.push(item.get());
             }
             console.log('the list')
@@ -70,10 +81,10 @@ export class BaseMapper {
     /**
      * Preparing the paginated results
      * @param list
-     * @param query
+     * @param body
      */
-    public prepareListResults(list, query: Query = {}) {
-        return this.generatePagination(list, query)
+    public prepareListResults(list, body: Body) {
+        return this.generatePagination(list, body)
     }
 
     /**
@@ -81,18 +92,19 @@ export class BaseMapper {
      * @param list: string[]
      * @param query: Query
      */
-    public generatePagination(list:string[], query: Query = {}) : PaginationResults {
+    public generatePagination(list:string[], body: Body) : PaginationResults {
         let listClone;
         listClone = list;
-        console.log(list);
+      
+        const search = body.search || null;
+        const sort = body.sort.order || this['DEFAULT_SORT']
+        const order = body.sort.order || 'asc';
+        const page = body.pageIndex || 1;
+        const size = body.pageSize || 10;
 
-        const search = query.search || null;
-        const sort = query.sort || this['DEFAULT_SORT']
-        const order = query.order || 'asc';
-        const page = query.page || 1;
-        const size = query.size || 10;
-
-        if (sort === 'identifier' || sort === query.sort)
+        console.log('sdsdfsdf')
+        console.log(sort);
+        if (sort === 'identifier' || sort === body.sort)
         {
             listClone.sort((a, b) => {
 

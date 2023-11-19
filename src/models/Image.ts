@@ -3,15 +3,33 @@
 const {DataTypes, Model, sequelize} = require('../db');
 import { Gallery } from "./Gallery";
 import { GalleryTag } from "./GalleryTag";
-class Image extends Model {}
+import { s3Mapper } from "../mapper";
+class Image extends Model {
+    static PARAM_FRONTCLOUD = 'https://d34wc8uzk8vrsx.cloudfront.net'
+    //static PARAM_LOCATION = ''
+}
 
 Image.init({
     id: {
         type: DataTypes.STRING,
         primaryKey: true
     },
+    
     key: {
         type: DataTypes.STRING,
+        get(this: Image): string {
+            const rawValue = this.getDataValue('key');
+            const signatureSmall = s3Mapper.resizeWithInS3(rawValue, {
+                "resize": {
+                    "width": 200,
+                    "height": 200,
+                    "fit": "inside"
+                }
+            });
+
+            return `${Image.PARAM_FRONTCLOUD}/${signatureSmall}`; 
+            },
+    
     },
     GalleryId: {
         type: DataTypes.STRING,
