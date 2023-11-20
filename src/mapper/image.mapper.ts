@@ -9,7 +9,12 @@ export interface ImageOptions {
     GalleryId?: string;
 }
 
-
+export interface paramsOptions {
+    id?: string
+    pageIndex:number
+    pageSize:number
+    filterQuery?:string
+}
 
 export class ImageMapper extends BaseMapper {
     private _PARAMS_NAME: string = 'name';
@@ -29,7 +34,7 @@ export class ImageMapper extends BaseMapper {
             image.primaryImage = body.primaryImage
             image.save();
 
-           return image;
+            return image;
 
         } catch (error) {
             return error.toString();
@@ -46,7 +51,7 @@ export class ImageMapper extends BaseMapper {
 
             const imageConfig = {
                 include: [{
-                    attributes: { exclude: ['ImageId', 'GalleryTagTagId']},
+                    attributes: { exclude: ['ImageId', 'GalleryTagTagId'] },
                     association: Image.Gallery,
                     required: true
                 },
@@ -76,16 +81,14 @@ export class ImageMapper extends BaseMapper {
         let offset;
 
         try {
-            if (params.pageIndex === 1) {
-                offset = 0;
-            } else {
-                offset = params.pageIndex * params.pageSize;
-            }
+            const offset = ((params.pageIndex-1) * params.pageSize)
+         
             const imagesConfig = {
                 offset: offset,
                 limit: params.pageSize,
             }
 
+            console.log(imagesConfig)
             return await Image.findAll(imagesConfig).then(images => {
                 return this.processArray(images);
             }).catch(err => {
@@ -97,6 +100,25 @@ export class ImageMapper extends BaseMapper {
         }
     }
 
+    /**
+     * Function which returns number of rows
+     * @returns Returns count of images
+     */
+    public async getListLength() {
+        try {
+
+            const sql = 'SELECT count(`id`) as count FROM image';
+            return await sequelize.query(sql).then(imageCount => {
+                console.log('the count');
+                console.log(imageCount[0][0]['count']);
+                return imageCount[0][0]['count'];
+            }).catch(err => {
+                return err;
+            })
+        } catch (error) {
+            return error.toString();
+        }
+    }
     public async getAllPrimaryImages(options: GalleryOptions) { //: Promise<string[] | string> {
         try {
 
@@ -105,10 +127,10 @@ export class ImageMapper extends BaseMapper {
 
                 primaryImageConfig = {
                     include: [
-                    {
-                        association: Image.GalleryTag,
-                        required: true,
-                    }
+                        {
+                            association: Image.GalleryTag,
+                            required: true,
+                        }
                     ],
                     where: {
                         '$Image.primaryImage$': 1
@@ -141,12 +163,12 @@ export class ImageMapper extends BaseMapper {
             }).catch(err => {
                 return err;
             })
-/*            console.log(primaryImageConfig);
-            return await Image.findAll(primaryImageConfig).then(galleries => {
-                return this.processArray(galleries);
-            }).catch(err => {
-                return err;
-            }) */
+            /*            console.log(primaryImageConfig);
+                        return await Image.findAll(primaryImageConfig).then(galleries => {
+                            return this.processArray(galleries);
+                        }).catch(err => {
+                            return err;
+                        }) */
         } catch (error) {
 
             return error.toString();
@@ -158,12 +180,14 @@ export class ImageMapper extends BaseMapper {
  * @param options 
  * @returns 
  */
-    public async getImagesByGallery(options: ImageOptions) {
+    public async getImagesByGallery(options: paramsOptions) {
         try {
+
+            const offset = ((options.pageIndex-1) * options.pageSize)
             const images = {
-                where: { GalleryId: options.GalleryId },
+                where: { GalleryId: options.id },
                 offset: 0,
-                limit: 40,
+                limit: options.pageSize,
             }
 
             return await Image.findAll(images).then(data => {

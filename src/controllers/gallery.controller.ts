@@ -1,5 +1,5 @@
 import { Gallery } from "src/models";
-import { galleryMapper, tagMapper, ImageOptions, GalleryOptions } from "../mapper/";
+import { galleryMapper, tagMapper, paramsOptions, GalleryOptions } from "../mapper/";
 
 export class GalleryController {
 
@@ -16,7 +16,23 @@ export class GalleryController {
             //        return res.status(500).json({error: 'Not Authorized to access the API'})
             //      }
 
-            const galleries = await galleryMapper.getAllGalleries(req.body);
+
+            const options: paramsOptions = { pageIndex: 1, pageSize:10, filterQuery: "" };
+
+            if (req.params.pageIndex) {
+                options.pageIndex = req.params.pageIndex;
+            }
+
+            if (req.params.pageIndex) {
+                options.pageIndex = req.params.pageIndex;
+            }
+
+            if (req.params.filterQuery) {
+                options.pageIndex = req.params.filterQuery;
+            }
+
+
+            const galleries = await galleryMapper.getAllGalleries(options);
 
             if (typeof galleries === 'string') {
                 return res.status(500).json({ errors_string: galleries })
@@ -83,7 +99,7 @@ export class GalleryController {
             }
 
             const gallery = await galleryMapper.getGalleryById(options);
-
+             
             gallery.dataValues.tags = gallery.Tags.map((tag) => {
                 console.log({"label":tag.name, "value":tag.id})
                 return {"label":tag.name, "value":tag.id}

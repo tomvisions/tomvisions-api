@@ -20,11 +20,12 @@ export interface Query {
 export interface Body {
     "pageIndex": number,
     "pageSize": number,
-    "search": string
+    "search": string,
     "sort": {
         "order": string,
         "key": string
     },
+    "listLength":number,
 }
 
 /*
@@ -126,7 +127,8 @@ export class BaseMapper {
             listClone = listClone.filter(contact => contact.name && contact.name.toLowerCase().includes(search.toLowerCase()));
         }
         // Paginate - Start
-        const listLength = listClone.length;
+        const listLength = body.listLength
+
         // Calculate pagination details
         const begin = (page -1 ) * size;
         const end = Math.min((size * (page + 1)), listLength);
@@ -147,19 +149,19 @@ export class BaseMapper {
             };
         } else {
             // Paginate the results by size
-            list = listClone.slice(begin, end);
+          //  list = listClone.slice(begin, end);
             // Prepare the pagination mock-api
             pagination = {
-                length    : listLength,
-                size      : size,
-                page      : page,
+                total    : listLength,
+                pageSize      : size,
+                pageIndex      : page,
                 lastPage  : lastPage,
                 startIndex: begin,
                 endIndex  : end - 1
             };
         }
 
-        return JSON.parse(`{"data":${JSON.stringify(list)}, "pagination": ${JSON.stringify(pagination)}}`);
+        return JSON.parse(`{"data":${JSON.stringify(list)}, "total":"${listLength}","pageSize":"${size}", "pageIndex":"${page}", "lastPage":"${lastPage}"}`);
     }
 
     public generateJWTToken() {

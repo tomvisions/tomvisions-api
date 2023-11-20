@@ -10,13 +10,13 @@ mediaRouter.get("/id/:id", GalleryController.apiGetGalleryById);
 mediaRouter.put("/id/:id", GalleryController.apiUpdateGalleryById);
 
 
-mediaRouter.get("/id/:id/image", ImageController.apiGetAllImagesByGallery);
+mediaRouter.post("/id/:id/image/page-index/:pageIndex/page-size/:pageSize/filter-query/:filterQuery", ImageController.apiGetAllImagesByGallery);
 
 mediaRouter.get("/primary", ImageController.apiGetAllPrimaryImages);
 mediaRouter.get("/primary/section/:section", ImageController.apiGetAllPrimaryImages);
 
 
-mediaRouter.post("/", GalleryController.apiGetAllGalleries);
+mediaRouter.post("/page-index/:pageIndex/page-size/:pageSize/filter-query/:filterQuery", GalleryController.apiGetAllGalleries);
 mediaRouter.post("/image", ImageController.apiGetAllImages);
 mediaRouter.get("/image/id/:id", ImageController.apiGetImage);
 mediaRouter.put("/image/id/:id", ImageController.apiUpdateImage);

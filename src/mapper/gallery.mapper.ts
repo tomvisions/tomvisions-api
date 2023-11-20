@@ -1,7 +1,7 @@
 "use strict";
 import { Gallery, GalleryTag } from "../models/";
 //import {gallery as Gallery, image as Image} from "../models/";
-import { BaseMapper } from '.';
+import { BaseMapper, paramsOptions } from '.';
 import moment from "moment";
 import { hasSubscribers } from "diagnostics_channel";
 import * as uuid from 'uuid';
@@ -24,19 +24,16 @@ export class GalleryMapper extends BaseMapper {
 
 
 
-    public async getAllGalleries(body) { //: Promise<string[] | string> {
-        let offset;
+    public async getAllGalleries(params: paramsOptions) { //: Promise<string[] | string> {
         try {
-            if (body.pageIndex === 1) {
-                offset = 0;
-            } else {
-                offset = body.pageIndex * body.pageSize;
-            }
+
+
+            const offset = ((params.pageIndex-1) * params.pageSize)
+         
             const galleryConfig = {
                 attributes: { exclude: ['ImageId', 'GalleryTagTagId'] },
                 offset: offset,
-                limit: body.pageSize,
-
+                limit: params.pageSize,
             }
 
             return await Gallery.findAll(galleryConfig).then(galleries => {

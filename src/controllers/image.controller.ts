@@ -1,4 +1,4 @@
-import { imageMapper } from "../mapper";
+import { imageMapper, paramsOptions } from "../mapper";
 import { GalleryOptions, ImageOptions } from "../mapper";
 
 export class ImageController {
@@ -82,6 +82,10 @@ export class ImageController {
                 return res.status(500).json({ errors_string: images })
             }
 
+            console.log('the list');
+            console.log(images);
+
+            req.body.listLength = await imageMapper.getListLength();
             const paginationResults = imageMapper.prepareListResults(images, req.body);
 
             return res.status(200).json(paginationResults);
@@ -136,17 +140,36 @@ export class ImageController {
             //        if (!galleryMapper.checkAuthenication(req.headers.authorization)) {
             //        return res.status(500).json({error: 'Not Authorized to access the API'})
             //      }
-            const options: ImageOptions = { GalleryId: "string" };
+
+           
+            const options: paramsOptions = { id: "string", pageIndex: 1, pageSize:10, filterQuery: "" };
+
 
             if (req.params.id) {
-                options.GalleryId = req.params.id;
+                options.id = req.params.id;
             }
+
+            if (req.params.pageIndex) {
+                options.pageIndex = req.params.pageIndex;
+            }
+
+            if (req.params.pageIndex) {
+                options.pageIndex = req.params.pageIndex;
+            }
+
+            if (req.params.filterQuery) {
+                options.pageIndex = req.params.filterQuery;
+            }
+
 
             const galleries = await imageMapper.getImagesByGallery(options);
 
             if (typeof galleries === 'string') {
                 return res.status(500).json({ errors_string: galleries })
             }
+
+            console.log('the gallery');
+            console.log(galleries);
 
             const paginationResults = imageMapper.prepareListResults(galleries, req.query);
 
