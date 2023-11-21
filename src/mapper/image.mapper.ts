@@ -1,20 +1,10 @@
 import { BaseMapper } from ".";
 import { Image } from "../models";
-import { GalleryOptions } from ".";
+import { paramsOptions } from ".";
 import { Gallery } from "../models/Gallery";
 import { sequelize } from "../db";
+const sizeOf = require('image-size');
 
-
-export interface ImageOptions {
-    GalleryId?: string;
-}
-
-export interface paramsOptions {
-    id?: string
-    pageIndex:number
-    pageSize:number
-    filterQuery?:string
-}
 
 export class ImageMapper extends BaseMapper {
     private _PARAMS_NAME: string = 'name';
@@ -72,22 +62,52 @@ export class ImageMapper extends BaseMapper {
         }
     }
 
+    public async deleteImageById(id) {
+        try {
+
+            const imageConfig = {
+                where: {
+                    id: id
+                },
+            }
+
+            const image = await Image.findOrCreate(imageConfig).then(data => {
+
+                return data[0];
+            }).catch(err => {
+                return err;
+            })
+
+            image.active = 0;
+            image.save();
+
+            return true;
+
+        } catch (error) {
+            return error.toString();
+        }
+    }
+
     /**
      * Getting all images
      * @param params 
      * @returns 
      */
-    public async getAllImages(params) { //: Promise<string[] | string> {
+    public async getAllImages(params: paramsOptions) { //: Promise<string[] | string> {
         let offset;
 
         try {
-            const offset = ((params.pageIndex-1) * params.pageSize)
-         
+            const offset = ((params.pageIndex - 1) * params.pageSize)
+
             const imagesConfig = {
                 offset: offset,
                 limit: params.pageSize,
+                where: {
+                    active: 1
+                },
             }
 
+            console.log('image config')
             console.log(imagesConfig)
             return await Image.findAll(imagesConfig).then(images => {
                 return this.processArray(images);
@@ -107,7 +127,7 @@ export class ImageMapper extends BaseMapper {
     public async getListLength() {
         try {
 
-            const sql = 'SELECT count(`id`) as count FROM image';
+            const sql = 'SELECT count(`id`) as count FROM image WHERE active = 1';
             return await sequelize.query(sql).then(imageCount => {
                 console.log('the count');
                 console.log(imageCount[0][0]['count']);
@@ -119,7 +139,7 @@ export class ImageMapper extends BaseMapper {
             return error.toString();
         }
     }
-    public async getAllPrimaryImages(options: GalleryOptions) { //: Promise<string[] | string> {
+    public async getAllPrimaryImages(options: paramsOptions) { //: Promise<string[] | string> {
         try {
 
             let primaryImageConfig = {}
@@ -183,11 +203,12 @@ export class ImageMapper extends BaseMapper {
     public async getImagesByGallery(options: paramsOptions) {
         try {
 
-            const offset = ((options.pageIndex-1) * options.pageSize)
+            const offset = ((options.pageIndex - 1) * options.pageSize)
             const images = {
-                where: { GalleryId: options.id },
+                where: [{ GalleryId: options.id }, {active:1}],
                 offset: 0,
                 limit: options.pageSize,
+                
             }
 
             return await Image.findAll(images).then(data => {

@@ -64,11 +64,8 @@ export class TagMapper extends BaseMapper {
         let offset;
 
         try {
-            if (params.pageIndex === 1) {
-                offset = 0;
-            } else {
-                offset = params.pageIndex * params.pageSize;
-            }
+
+            const offset = ((params.pageIndex - 1) * params.pageSize)
             
             const tagConfig = {
                 offset: offset,

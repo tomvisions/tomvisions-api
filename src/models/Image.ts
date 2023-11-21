@@ -15,21 +15,12 @@ Image.init({
         primaryKey: true
     },
     
+
     key: {
         type: DataTypes.STRING,
-        get(this: Image): string {
-            const rawValue = this.getDataValue('key');
-            const signatureSmall = s3Mapper.resizeWithInS3(rawValue, {
-                "resize": {
-                    "width": 200,
-                    "height": 200,
-                    "fit": "inside"
-                }
-            });
-
-            return `${Image.PARAM_FRONTCLOUD}/${signatureSmall}`; 
-            },
-    
+    },
+    active : {
+        type: DataTypes.SMALLINT,
     },
     GalleryId: {
         type: DataTypes.STRING,

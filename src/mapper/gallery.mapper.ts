@@ -5,16 +5,8 @@ import { BaseMapper, paramsOptions } from '.';
 import moment from "moment";
 import { hasSubscribers } from "diagnostics_channel";
 import * as uuid from 'uuid';
-import { ImageOptions } from ".";
 import { Image } from "../models/";
 import { Tag } from "../models/";
-export interface Options {
-    image?: ImageOptions,
-    gallery?: GalleryOptions
-}
-export interface GalleryOptions {
-    section?: string;
-}
 
 export class GalleryMapper extends BaseMapper {
     private _PARAMS_ID: string = 'id';
@@ -55,7 +47,7 @@ export class GalleryMapper extends BaseMapper {
      * @param options 
      * @returns 
      */
-    public async updateGallery(options: ImageOptions, body) {
+    public async updateGallery(options: paramsOptions, body) {
         try {
             const gallery = await this.getGalleryById(options);
             console.log('the gallery');
@@ -64,7 +56,7 @@ export class GalleryMapper extends BaseMapper {
             gallery.save();
 
 
-            await this.deleteGalleryTagsByParams({ where: { GalleryId: options.GalleryId } })
+            await this.deleteGalleryTagsByParams({ where: { GalleryId: options.id } })
 
             body.tags.map(async (tag) => {
                 console.log('the tag');
@@ -115,7 +107,7 @@ export class GalleryMapper extends BaseMapper {
      * @param options 
      * @returns 
      */
-    public async getGalleryById(options: ImageOptions) {
+    public async getGalleryById(options: paramsOptions) {
         try {
             console.log('get gallery');
 
@@ -127,7 +119,7 @@ export class GalleryMapper extends BaseMapper {
                         required: false
                     },
                 ], 
-                where: { id: options.GalleryId },
+                where: { id: options.id },
                 attributes: {exclude: ['ImageId', 'GalleryTagTagId']},
             }
     

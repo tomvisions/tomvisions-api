@@ -10,19 +10,19 @@ mediaRouter.get("/id/:id", GalleryController.apiGetGalleryById);
 mediaRouter.put("/id/:id", GalleryController.apiUpdateGalleryById);
 
 
-mediaRouter.post("/id/:id/image/page-index/:pageIndex/page-size/:pageSize/filter-query/:filterQuery", ImageController.apiGetAllImagesByGallery);
+mediaRouter.get("/id/:id/image/:pageIndex?/:pageSize?/:sort?/:order?", ImageController.apiGetAllImagesByGallery);
 
-mediaRouter.get("/primary", ImageController.apiGetAllPrimaryImages);
 mediaRouter.get("/primary/section/:section", ImageController.apiGetAllPrimaryImages);
 
 
-mediaRouter.post("/page-index/:pageIndex/page-size/:pageSize/filter-query/:filterQuery", GalleryController.apiGetAllGalleries);
-mediaRouter.post("/image", ImageController.apiGetAllImages);
+mediaRouter.post("/page-index/:pageIndex/page-size/:pageSize/:sort?/:order?", GalleryController.apiGetAllGalleries);
+mediaRouter.post("/image/page-index/:pageIndex/page-size/:pageSize/:sort?/:order?", ImageController.apiGetAllImages);
 mediaRouter.get("/image/id/:id", ImageController.apiGetImage);
 mediaRouter.put("/image/id/:id", ImageController.apiUpdateImage);
+mediaRouter.delete("/image/id/:id", ImageController.apiDeleteImage);
 
 
-mediaRouter.post("/tag", TagController.apiGetAllTags);
+mediaRouter.post("/tag/page-index/:pageIndex/page-size/:pageSize/:sort?/:query?", TagController.apiGetAllTags);
 mediaRouter.post("/tag/list", TagController.apiGetAllTagsAsLabelValues);
 
 mediaRouter.post("/tag/new", TagController.apiCreateTag);

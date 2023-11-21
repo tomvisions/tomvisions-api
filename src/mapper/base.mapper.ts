@@ -9,30 +9,25 @@ export interface PaginationResults {
     pagination: any;
 }
 
-export interface Query {
-    search?:string;
-    sort?:string;
-    order?:string;
-    page?:number;
-    size?:number;
-}
-
-export interface Body {
-    "pageIndex": number,
-    "pageSize": number,
-    "search": string,
-    "sort": {
-        "order": string,
-        "key": string
-    },
-    "listLength":number,
+export interface paramsOptions {
+    id?: string
+    pageIndex?:number
+    pageSize?:number
+    filterQuery?:string
+    search?:string
+    section?:string
+    sort?: string,
+    order?: string
+    listLength?:number,
 }
 
 /*
 The Base Mapper. Functions which are in common with others mappers are placed here to avoid duplication of code
  */
 export class BaseMapper {
-    private _QUERY: string;
+    private _QUERY;
+    private _DEFAULT_ORDER: string = 'ASC';
+
     private _PARAM_FRONTCLOUD = 'https://images.mamboleofc.ca'
 
     public async processArray(listing) {
@@ -84,7 +79,7 @@ export class BaseMapper {
      * @param list
      * @param body
      */
-    public prepareListResults(list, body: Body) {
+    public prepareListResults(list, body: paramsOptions) {
         return this.generatePagination(list, body)
     }
 
@@ -93,13 +88,13 @@ export class BaseMapper {
      * @param list: string[]
      * @param query: Query
      */
-    public generatePagination(list:string[], body: Body) : PaginationResults {
+    public generatePagination(list:string[], body: paramsOptions) : PaginationResults {
         let listClone;
         listClone = list;
       
         const search = body.search || null;
-        const sort = body.sort.order || this['DEFAULT_SORT']
-        const order = body.sort.order || 'asc';
+        const sort = body.sort || this['DEFAULT_SORT']
+        const order = body.order || 'asc';
         const page = body.pageIndex || 1;
         const size = body.pageSize || 10;
 
@@ -149,7 +144,9 @@ export class BaseMapper {
             };
         } else {
             // Paginate the results by size
-          //  list = listClone.slice(begin, end);
+         //   list = listClone.slice(begin, end);
+            console.log('the final list');
+            console.log(list);
             // Prepare the pagination mock-api
             pagination = {
                 total    : listLength,
@@ -161,7 +158,7 @@ export class BaseMapper {
             };
         }
 
-        return JSON.parse(`{"data":${JSON.stringify(list)}, "total":"${listLength}","pageSize":"${size}", "pageIndex":"${page}", "lastPage":"${lastPage}"}`);
+        return JSON.parse(`{"data":${JSON.stringify(list)}, "total":"${listLength}","pageSize":"${size}", "pageIndex":"${page}", "lastage":"${lastPage}"}`);
     }
 
     public generateJWTToken() {
@@ -192,6 +189,9 @@ export class BaseMapper {
         }
     }
 
+    get DEFAULT_ORDER(): string {
+        return this._DEFAULT_ORDER;
+    }
 
     set QUERY(value: string) {
         this._QUERY = value;
