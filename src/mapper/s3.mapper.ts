@@ -3,8 +3,6 @@ import fs, {existsSync} from "fs";
 const sizeOf = require('image-size');
 import * as uuid from 'uuid';
 const { exec } = require("child_process");
-const sizeOf = require('image-size');
-
 
 export interface FileProperties {
     content_type?: string;

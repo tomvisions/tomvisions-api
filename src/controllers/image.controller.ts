@@ -20,6 +20,7 @@ export class ImageController {
 
             const images = await imageMapper.deleteImageById(id);
 
+            
             if (typeof images === 'string') {
                 return res.status(500).json({ errors_string: images })
             }
@@ -147,9 +148,6 @@ export class ImageController {
             //      }
             const options: paramsOptions = { section: 'all' };
 
-            if (req.params.section) {
-                options.section = req.params.section
-            }
 
             const images = await imageMapper.getAllPrimaryImages(options);
 
@@ -180,7 +178,7 @@ export class ImageController {
             //      }
 
 
-            const options: paramsOptions = { id: "string", pageIndex: 1, pageSize: 10, filterQuery: "" };
+            const options: paramsOptions = { id: "string", pageIndex: 1, pageSize: 20, filterQuery: "" };
 
 
             if (req.params.id) {
