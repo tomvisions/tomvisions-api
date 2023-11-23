@@ -39,7 +39,12 @@ Image.init({
     },
     updatedAt: {
         type: DataTypes.DATE,
-    }
+    },
+    orientation: {
+        type: DataTypes.SMALLINT,
+    },
+
+
 }, {
     modelName: 'Image', sequelize: sequelize, tableName:"image"
 });
