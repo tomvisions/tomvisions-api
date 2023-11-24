@@ -23,7 +23,7 @@ Parameters:
         Type: String
         Description: Bucket for Images
         Default: $Stage
-    DBInfo:
+    DbInfo:
         Type: String
         Description: Bucket for Images
         Default: $DbInfo
@@ -62,6 +62,8 @@ Resources:
             Environment:
                 Variables:
                     DB_INFO: !Ref DBInfo
+                    STAGE: !Ref Stage
+
 
             MemorySize: 1024
             Timeout: 30
