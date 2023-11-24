@@ -23,7 +23,7 @@ Parameters:
         Type: String
         Description: Bucket for Images
         Default: $Stage
-    DN_INFO:
+    DBInfo:
         Type: String
         Description: Bucket for Images
         Default: $DbInfo
@@ -59,6 +59,10 @@ Resources:
             PackageType: Zip
             Runtime: nodejs18.x
             Handler: lambda.handler
+            Environment:
+                Variables:
+                    DB_INFO: !Ref DBInfo
+
             MemorySize: 1024
             Timeout: 30
             Events:
