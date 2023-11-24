@@ -51,6 +51,14 @@ let options;
 console.log('the db info');
 console.log(process.env.DB_INFO);
 
+console.log('the db name');
+console.log(process.env.DB_INFO['Name']);
+
+console.log('the db secret');
+console.log(process.env.DB_INFO['SecretString']);
+
+
+
 console.log('the stage');
 console.log(process.env.STAGE);
 
