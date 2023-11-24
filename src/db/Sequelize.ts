@@ -49,6 +49,9 @@ export class SequelizeApi {
 
 let options;
 const DB_INFO: DBOptions = JSON.parse(process.env.DB_INFO);
+console.log('the db info');
+console.log(DB_INFO);
+
 
 if (DB_INFO.NODE_ENV === 'dev') {
     options = {host: DB_INFO.DB_HOST, dialect: 'mysql', port:3306}
