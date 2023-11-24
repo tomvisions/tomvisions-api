@@ -1,7 +1,7 @@
 version: 0.2
 env:
   secrets-manager:
-     DB_HOST: DB_INFO_STAGE
+     DB_INFO_STAGE: arn:aws:secretsmanager:us-east-1:955552760689:secret:DB_INFO_STAGE-4BHG61
   variables:    
     USERNAME: $USERNAME
     PASSWORD: $PASSWORD
@@ -26,5 +26,6 @@ phases:
       - ls -al
   build:
     commands:
+      - echo $DB_INFO_STAGE
       - npm run deploy-stage
 
