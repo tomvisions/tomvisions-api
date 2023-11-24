@@ -13,7 +13,6 @@
         "domainProduction": "api.tomvisions.com",
         "certificate": "tomvisions.ca",
         "bucketNameImages": "tomvisions-original-images",
-        "stage": "stage"
     },
     "scripts": {
         "build": "tsc --project .",
