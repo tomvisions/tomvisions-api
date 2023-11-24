@@ -26,6 +26,8 @@ phases:
       - ls -al
   build:
     commands:
+      - echo "In the building process"
       - echo $DB_INFO_STAGE
+      - echo out env
       - npm run deploy-stage
 
