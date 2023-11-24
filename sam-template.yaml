@@ -65,7 +65,7 @@ Resources:
     ExpressLambdaFunction:
         Type: AWS::Serverless::Function
         Properties:
-            CodeUri: s3://codepipeline-us-east-1-projects/tomvisions-api/sam-deploy
+            CodeUri: ./dist
             PackageType: Zip
             Runtime: nodejs18.x
             Handler: lambda.handler
