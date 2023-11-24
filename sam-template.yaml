@@ -61,7 +61,7 @@ Resources:
             Handler: lambda.handler
             Environment:
                 Variables:
-                    DB_INFO: !Ref DBInfo
+                    DB_INFO: !Ref DbInfo
                     STAGE: !Ref Stage
 
 
