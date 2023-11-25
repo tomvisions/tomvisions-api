@@ -89,7 +89,6 @@ Resources:
                         RestApiId: !Ref ExpressApi
                         Path: /api/v1/mail
                         Method: ANY
-
     
             Policies:
                 - SESBulkTemplatedCrudPolicy_v2:
