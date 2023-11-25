@@ -30,6 +30,6 @@ phases:
     commands:
       - echo "In the building process"
       - echo $DB_INFO
-      - echo "$DB_INFO" | jq -r '.access_token
+      - echo "$DB_INFO" | jq -r '.DB_HOST'
       - npm run deploy-stage
 
