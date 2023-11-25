@@ -15,18 +15,16 @@ phases:
 #      - npm install babel-plugin-transform-runtime --save
 #      - npm install babel-preset-env --save
       - echo Going through prebuild
-      - export DB_USERNAME=$(echo "$DB_INFO" | jq -r '.DB_USERNAME')
-      - export DB_HOST=$(echo "$DB_INFO" | jq -r '.DB_HOST')
-      - export DB_PASSWORD=$(echo "$DB_INFO" | jq -r '.DB_PASSWORD')
-      - export DB_NAME=$(echo "$DB_INFO" | jq -r '.DB_NAME')
-      - export NODE_ENV=$(echo "$DB_INFO" | jq -r '.NODE_ENV')
-
-
   build:
     commands:
  #   TOKEN_SECRET: $TOKEN_SECRE
 #      - export NODE_ENV=$(echo "$DB_INFO" | jq -r '.NODE_ENV')
 
     #  - echo "$DB_INFO" | jq -r '.DB_HOST'
+      - export DB_USERNAME=$(echo "$DB_INFO" | jq -r '.DB_USERNAME')
+      - export DB_HOST=$(echo "$DB_INFO" | jq -r '.DB_HOST')
+      - export DB_PASSWORD=$(echo "$DB_INFO" | jq -r '.DB_PASSWORD')
+      - export DB_NAME=$(echo "$DB_INFO" | jq -r '.DB_NAME')
+      - export NODE_ENV=$(echo "$DB_INFO" | jq -r '.NODE_ENV')
       - npm run deploy-stage
 
