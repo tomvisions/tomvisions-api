@@ -17,6 +17,7 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws --version
       - sam --version
+      - npm install jq
       - npm install
       - npm install --location=global cross-env cross-var-no-babel
   build:
