@@ -27,6 +27,10 @@ Parameters:
         Type: String
         Description: Bucket for Images
         Default: $DbHost
+    DbName:
+        Type: String
+        Description: Bucket for Images
+        Default: $DbName
     DbUserName:
         Type: String
         Description: Bucket for Images
@@ -76,7 +80,7 @@ Resources:
             Handler: lambda.handler
             Environment:
                 Variables:
-                    DB_INFO: !Ref DbInfo
+                    DB_NAME: !Ref DbName
                     STAGE: !Ref Stage   
                     DB_HOST: !Ref DbHost
                     DB_USERNAME: !Ref DbUserName
