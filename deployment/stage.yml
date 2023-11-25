@@ -5,11 +5,6 @@ env:
      DB_INFO: arn:aws:secretsmanager:us-east-1:955552760689:secret:DB_INFO_STAGE-4BHG61
 
   variables:    
-    DB_USERNAME: $(echo "$DB_INFO" | jq -r '.DB_USERNAME')
-    DB_PASSWORD: $(echo "$DB_INFO" | jq -r '.DB_PASSWORD')
-    DB_NAME: $(echo "$DB_INFO" | jq -r '.DB_NAME')
-    TOKEN_SECRET: $TOKEN_SECRET
-    NODE_ENV: $(echo "$DB_INFO" | jq -r '.NODE_ENV')
 phases:
   install:
     commands:
@@ -31,7 +26,15 @@ phases:
       - echo "In the building process"
       - echo $DB_INFO
       - echo "the username"
+      - export DB_USERNAME=$(echo "$DB_INFO" | jq -r '.DB_USERNAME')
       - echo $DB_USERNAME
+      - export DB_USERNAME=$(echo "$DB_INFO" | jq -r '.DB_USERNAME')
+      - export DB_PASSWORD=$(echo "$DB_INFO" | jq -r '.DB_PASSWORD')
+      - export DB_NAME=$(echo "$DB_INFO" | jq -r '.DB_NAME')
+ #   TOKEN_SECRET: $TOKEN_SECRET
+      - export NODE_ENV=$(echo "$DB_INFO" | jq -r '.NODE_ENV')
+    
+
     #  - echo "$DB_INFO" | jq -r '.DB_HOST'
       - npm run deploy-stage
 
