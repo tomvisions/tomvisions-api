@@ -48,13 +48,8 @@ export class SequelizeApi {
 }
 
 let options;
-console.log('the db info');
-console.log(process.env.DB_HOST);
-
-
-
-console.log('the stage');
-console.log(process.env.STAGE);
+console.log('the env');
+console.log(process.env);
 
 //const DB_INFO: DBOptions = JSON.parse(process.env.DB_INFO);
 //console.log('the db info');
