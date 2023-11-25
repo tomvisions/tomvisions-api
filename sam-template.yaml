@@ -44,12 +44,6 @@ Parameters:
         Description: Bucket for Images
         Default: $NodeEnv
 
-
-
-
-
-
-
 Conditions:
     UseDomainName: !Not
         - !Equals
