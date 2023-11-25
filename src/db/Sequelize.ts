@@ -37,6 +37,9 @@ export class SequelizeApi {
         this._username = username;
         this._password = password;
         this._options = options;
+
+        console.log('in here');
+        console.group(this);
     }
 
     /**
