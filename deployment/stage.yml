@@ -30,7 +30,7 @@ phases:
     commands:
       - echo "In the building process"
       - echo $DB_INFO
-      - echo $DB_INFO.DB_HOST
+      - echo $DB_INFO['DB_HOST']
       - echo out env
       - npm run deploy-stage
 
