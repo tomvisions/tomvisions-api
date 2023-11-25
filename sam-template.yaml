@@ -111,7 +111,7 @@ Resources:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/media/id/{id}/images/{pageIndex}/{pageSize}/{sort}/{order}
+                        Path: /api/v1/media/id/{id}/image/{pageIndex}/{pageSize}/{sort}/{order}
                         Method: ANY
                 MediaImagesPrimary:
                     Type: Api
