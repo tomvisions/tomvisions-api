@@ -154,7 +154,7 @@ Resources:
                         Path: /api/v1/media/tag/new
                         Method: ANY
 
-                MediaNewTag:
+                MediaNewTagA:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
