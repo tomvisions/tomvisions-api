@@ -153,6 +153,13 @@ Resources:
                         RestApiId: !Ref ExpressApi
                         Path: /api/v1/media/tag/new
                         Method: ANY
+
+                   MediaNewTag:
+                    Type: Api
+                    Properties:
+                        RestApiId: !Ref ExpressApi
+                        Path: /api/v1/media/tag/test
+                        Method: ANY        
     
             Policies:
                 - SESBulkTemplatedCrudPolicy_v2:
