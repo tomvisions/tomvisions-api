@@ -3,8 +3,6 @@ env:
   secrets-manager:
      DB_INFO_STAGE: arn:aws:secretsmanager:us-east-1:955552760689:secret:DB_INFO_STAGE-4BHG61
      DB_INFO: arn:aws:secretsmanager:us-east-1:955552760689:secret:DB_INFO_STAGE-4BHG61
-
-  variables:    
 phases:
   install:
     commands:
@@ -33,7 +31,7 @@ phases:
       - export DB_NAME=$(echo "$DB_INFO" | jq -r '.DB_NAME')
  #   TOKEN_SECRET: $TOKEN_SECRET
       - export NODE_ENV=$(echo "$DB_INFO" | jq -r '.NODE_ENV')
-    
+
 
     #  - echo "$DB_INFO" | jq -r '.DB_HOST'
       - npm run deploy-stage
