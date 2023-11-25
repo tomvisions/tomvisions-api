@@ -49,34 +49,28 @@ export class SequelizeApi {
 
 let options;
 console.log('the db info');
-console.log(process.env.DB_INFO);
-
-console.log('the db name');
-console.log(process.env.DB_INFO['Name']);
-
-console.log('the db secret');
-console.log(process.env.DB_INFO['SecretString']);
+console.log(process.env.DB_HOST);
 
 
 
 console.log('the stage');
 console.log(process.env.STAGE);
 
-const DB_INFO: DBOptions = JSON.parse(process.env.DB_INFO);
-console.log('the db info');
-console.log(DB_INFO);
+//const DB_INFO: DBOptions = JSON.parse(process.env.DB_INFO);
+//console.log('the db info');
+//console.log(DB_INFO);
 
 
-if (DB_INFO.NODE_ENV === 'dev') {
-    options = {host: DB_INFO.DB_HOST, dialect: 'mysql', port:3306}
+if (process.env.NODE_ENV === 'dev') {
+    options = {host: process.env.DB_HOST, dialect: 'mysql', port:3306}
 //    options = {host: '127.0.0.1', dialect: 'mysql', port:3306}
 } else if ( process.env.NODE_ENV === 'stage') {
-    options = {host: DB_INFO.DB_HOST, dialect: 'mysql', port:3306}
+    options = {host: process.env.DB_HOST, dialect: 'mysql', port:3306}
 } else {
-    options = {host: DB_INFO.DB_HOST, dialect: 'mysql', port:3306}
+    options = {host: process.env.DB_HOST, dialect: 'mysql', port:3306}
 }
 
-let sequelizeClass = new SequelizeApi(DB_INFO.DB_NAME, DB_INFO.DB_USERNAME,DB_INFO.DB_PASSWORD, options );//.initialize();
+let sequelizeClass = new SequelizeApi(process.env.DB_NAME, process.env.DB_USERNAME,process.env.DB_PASSWORD, options );//.initialize();
 let sequelize = sequelizeClass.initialize();
 
 export {sequelize};

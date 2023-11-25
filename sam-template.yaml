@@ -23,10 +23,25 @@ Parameters:
         Type: String
         Description: Bucket for Images
         Default: $Stage
-    DbInfo:
+    DbHost:
         Type: String
         Description: Bucket for Images
-        Default: $DbInfo
+        Default: $DbHost
+    DbUserName:
+        Type: String
+        Description: Bucket for Images
+        Default: $DbUserName
+    DbPassword:
+        Type: String
+        Description: Bucket for Images
+        Default: $DbPassword
+    NodeEnv:
+        Type: String
+        Description: Bucket for Images
+        Default: $NodeEnv
+
+
+
 
 
 
@@ -62,7 +77,21 @@ Resources:
             Environment:
                 Variables:
                     DB_INFO: !Ref DbInfo
-                    STAGE: !Ref Stage
+                    STAGE: !Ref Stage   
+                    DB_HOST: !Ref $DbHost
+                    DB_USERNAME: !Ref $DbUserName
+                    DB_PASSWORD: !Ref $DbPassword
+                    NODE_ENV: !Ref $NodeEnv
+
+    DbPassword:
+        Type: String
+        Description: Bucket for Images
+        Default: $DbPassword
+
+    NodeEnv:
+        Type: String
+        Description: Bucket for Images
+        Default: $NodeEnv
 
 
             MemorySize: 1024
