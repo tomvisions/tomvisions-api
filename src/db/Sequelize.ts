@@ -37,9 +37,6 @@ export class SequelizeApi {
         this._username = username;
         this._password = password;
         this._options = options;
-
-        console.log('in here');
-        console.group(this);
     }
 
     /**
@@ -51,13 +48,6 @@ export class SequelizeApi {
 }
 
 let options;
-console.log('the env');
-console.log(process.env);
-
-//const DB_INFO: DBOptions = JSON.parse(process.env.DB_INFO);
-//console.log('the db info');
-//console.log(DB_INFO);
-
 
 if (process.env.NODE_ENV === 'dev') {
     options = {host: process.env.DB_HOST, dialect: 'mysql', port:3306}
