@@ -78,10 +78,10 @@ Resources:
                 Variables:
                     DB_INFO: !Ref DbInfo
                     STAGE: !Ref Stage   
-                    DB_HOST: !Ref $DbHost
-                    DB_USERNAME: !Ref $DbUserName
-                    DB_PASSWORD: !Ref $DbPassword
-                    NODE_ENV: !Ref $NodeEnv
+                    DB_HOST: !Ref DbHost
+                    DB_USERNAME: !Ref DbUserName
+                    DB_PASSWORD: !Ref DbPassword
+                    NODE_ENV: !Ref NodeEnv
             MemorySize: 1024
             Timeout: 30
             Events:
