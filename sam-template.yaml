@@ -188,6 +188,8 @@ Resources:
             DistributionConfig:
                 Enabled: "true"
                 Comment: !Ref AWS::StackName
+                Aliases: 
+                    - api-stage.tomvisions.com
                 CNAMEs:
                     - api-stage.tomvisions.com
                 ViewerCertificate: 
