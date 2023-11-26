@@ -198,16 +198,15 @@ export class ImageController {
             }
 
 
-            const galleries = await imageMapper.getImagesByGallery(options);
+            const images = await imageMapper.getImagesByGallery(options);
 
-            if (typeof galleries === 'string') {
-                return res.status(500).json({ errors_string: galleries })
+            if (typeof images === 'string') {
+                return res.status(500).json({ errors_string: images })
             }
 
-            console.log('the gallery');
-            console.log(galleries);
 
-            const paginationResults = imageMapper.prepareListResults(galleries, req.query);
+            options.listLength = await imageMapper.getListLength(options);
+            const paginationResults = imageMapper.prepareListResults(images, options);
 
             return res.status(200).json(paginationResults);
 

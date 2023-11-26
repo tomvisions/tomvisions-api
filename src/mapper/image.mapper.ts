@@ -3,8 +3,6 @@ import { Image } from "../models";
 import { paramsOptions } from ".";
 import { Gallery } from "../models/Gallery";
 import { sequelize } from "../db";
-const sizeOf = require('image-size');
-
 
 export class ImageMapper extends BaseMapper {
     private _PARAMS_NAME: string = 'name';
@@ -122,12 +120,17 @@ export class ImageMapper extends BaseMapper {
 
     /**
      * Function which returns number of rows
+     * @param options
      * @returns Returns count of images
      */
-    public async getListLength() {
+    public async getListLength(options = null) {
         try {
 
-            const sql = 'SELECT count(`id`) as count FROM image WHERE active = 1';
+            let sql = 'SELECT count(`id`) as count FROM image WHERE active = 1 ';
+            if (options) {
+                sql += ` AND GalleryId = "${options['id']}"`;
+            }
+            console.log(sql);
             return await sequelize.query(sql).then(imageCount => {
                 console.log('the count');
                 console.log(imageCount[0][0]['count']);
@@ -206,7 +209,7 @@ export class ImageMapper extends BaseMapper {
             const offset = ((options.pageIndex - 1) * options.pageSize)
             const images = {
                 where: [{ GalleryId: options.id }, {active:1}],
-                offset: 0,
+                offset: offset,
                 limit: options.pageSize,
                 
             }
