@@ -207,6 +207,7 @@ export class ImageController {
 
             options.listLength = await imageMapper.getListLength(options);
             const paginationResults = imageMapper.prepareListResults(images, options);
+       //     const paginationResults = imageMapper.prepareListResults(galleries, req.query);
 
             return res.status(200).json(paginationResults);
 
