@@ -146,8 +146,10 @@ export class ImageController {
             //        if (!galleryMapper.checkAuthenication(req.headers.authorization)) {
             //        return res.status(500).json({error: 'Not Authorized to access the API'})
             //      }
-            const options: paramsOptions = { section: 'all' };
-
+            const options: paramsOptions = { code: null };
+            if (req.params.code) {
+                options.code = req.params.code;
+            }
 
             const images = await imageMapper.getAllPrimaryImages(options);
 

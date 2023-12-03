@@ -111,7 +111,7 @@ Resources:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/media/primary
+                        Path: /api/v1/media/primary/{code}
                         Method: GET
                 MediaImagesAllGalleries:
                     Type: Api

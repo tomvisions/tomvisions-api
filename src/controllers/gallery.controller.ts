@@ -46,8 +46,6 @@ export class GalleryController {
     }
 
 
-
-
     /**
    * Updating gallery based on ID
    * @param req

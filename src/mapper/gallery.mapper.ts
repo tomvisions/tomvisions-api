@@ -14,8 +14,6 @@ export class GalleryMapper extends BaseMapper {
     private _DEFAULT_SORT: string = 'name';
     private _LIST_NAME: string = 'galleries';
 
-
-
     public async getAllGalleries(params: paramsOptions) { //: Promise<string[] | string> {
         try {
 

@@ -11,7 +11,7 @@ mediaRouter.put("/id/:id", GalleryController.apiUpdateGalleryById);
 
 
 mediaRouter.get("/id/:id/image/:pageIndex?/:pageSize?/:sort?/:order?", ImageController.apiGetAllImagesByGallery);
-mediaRouter.get("/primary", ImageController.apiGetAllPrimaryImages);
+mediaRouter.get("/primary/:code?", ImageController.apiGetAllPrimaryImages);
 
 mediaRouter.post("/page-index/:pageIndex/page-size/:pageSize?/:sort?/:order?", GalleryController.apiGetAllGalleries);
 mediaRouter.post("/image/page-index/:pageIndex/page-size/:pageSize/:sort?/:order?", ImageController.apiGetAllImages);

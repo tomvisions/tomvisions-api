@@ -15,7 +15,7 @@ export interface paramsOptions {
     pageSize?:number
     filterQuery?:string
     search?:string
-    section?:string
+    code?:string
     sort?: string,
     order?: string
     listLength?:number,

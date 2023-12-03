@@ -145,44 +145,27 @@ export class ImageMapper extends BaseMapper {
     public async getAllPrimaryImages(options: paramsOptions) { //: Promise<string[] | string> {
         try {
 
-            let primaryImageConfig = {}
-            if (options.section) {
 
-                primaryImageConfig = {
-                    include: [
-                        {
-                            association: Image.GalleryTag,
-                            required: true,
-                        }
-                    ],
-                    where: {
-                        '$Image.primaryImage$': 1
-                    },
-                }
-            }
-
-            //     paramsWhere = JSON.parse(
-            //       `{
-            //      "slug":"${options.gallery.slug}"
-            //  }`)
-            //  } else {
-            //     paramsWhere = {};
-            /*}        
-                return await Image.findAll(paramsWhere).then(images => {
-                    return this.processArray(images);
-                    //     console.log(images);
-                    //   return images;
-                }).catch(err => {
-                    return err;
-                })
- 
-            }
-*/
             // console.log(paramsWhere);
        //     const sql = 'SELECT `Image`.`id`, `Image`.`key`, `Image`.`GalleryId`, `Image`.`name`, `Image`.`description`, `Image`.`primaryImage`, `gallery_tag`.`TagId`, gallery.name, gallery_tag.GalleryId FROM `image` AS `Image` INNER JOIN gallery ON gallery.id = `Image`.`GalleryId` INNER JOIN gallery_tag ON gallery_tag.GalleryId = `Image`.`GalleryId`  WHERE `Image`.`primaryImage` = 1';
           //  const sql = 'SELECT `Image`.`id`, `Image`.`key`, `Image`.`GalleryId`, `Image`.`name`, `Image`.`description`, `Image`.`primaryImage`, `gallery_tag`.`TagId`, gallery.name, gallery_tag.GalleryId FROM `image` AS `Image` INNER JOIN gallery ON gallery.id = `Image`.`GalleryId` INNER JOIN gallery_tag ON gallery_tag.GalleryId = `Image`.`GalleryId`  WHERE `Image`.`primaryImage` = 1 GROUP BY `Image`.`GalleryId`;'
-          const sql = 'SELECT `Image`.`id`, `Image`.`key`, `Image`.`GalleryId`, `Image`.`name`, `Image`.`description`, `Image`.`primaryImage`, (SELECT CAST(CONCAT(\'[\',GROUP_CONCAT(JSON_OBJECT(\'TagId\', TagId)),\']\') as JSON) FROM gallery_tag where gallery_tag.GalleryId = `Image`.`GalleryId`) as TagsId, gallery.name, gallery_tag.GalleryId FROM `image` AS `Image` INNER JOIN gallery ON gallery.id = `Image`.`GalleryId` INNER JOIN gallery_tag ON gallery_tag.GalleryId = `Image`.`GalleryId`  WHERE `Image`.`primaryImage` = 1 GROUP BY `Image`.`GalleryId`;'
-          //SELECT `Image`.`id`, `Image`.`key`, `Image`.`GalleryId`, `Image`.`name`, `Image`.`description`, `Image`.`primaryImage`, (SELECT CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('TagId', TagId)),']') as JSON) as tags FROM gallery_tag where gallery_tag.GalleryId = `Image`.`GalleryId`), `gallery_tag`.`TagId`, gallery.name, gallery_tag.GalleryId FROM `image` AS `Image` INNER JOIN gallery ON gallery.id = `Image`.`GalleryId` INNER JOIN gallery_tag ON gallery_tag.GalleryId = `Image`.`GalleryId`  WHERE `Image`.`primaryImage` = 1 GROUP BY `Image`.`GalleryId`;      
+
+
+
+        //  const sql = 'SELECT `Image`.`id`, `Image`.`key`, `Image`.`GalleryId`, `Image`.`name`, `Image`.`description`, `Image`.`primaryImage`, (SELECT CAST(CONCAT(\'[\',GROUP_CONCAT(JSON_OBJECT(\'TagId\', TagId)),\']\') as JSON) FROM gallery_tag where gallery_tag.GalleryId = `Image`.`GalleryId`) as TagsId, gallery.name, gallery_tag.GalleryId FROM `image` AS `Image` INNER JOIN gallery ON gallery.id = `Image`.`GalleryId` INNER JOIN gallery_tag ON gallery_tag.GalleryId = `Image`.`GalleryId`  WHERE `Image`.`primaryImage` = 1 GROUP BY `Image`.`GalleryId`;'
+            let sql = 'SELECT `Image`.`id`, `Image`.`key`, `Image`.`GalleryId`, `Image`.`name`, `Image`.`description`, `Image`.`primaryImage`, (SELECT CAST(CONCAT(\'[\',GROUP_CONCAT(JSON_OBJECT(\'TagId\', TagId)),\']\') as JSON) FROM gallery_tag where gallery_tag.GalleryId = `Image`.`GalleryId`) as TagsId, gallery.name, gallery_tag.GalleryId FROM `image` AS `Image` INNER JOIN gallery ON gallery.id = `Image`.`GalleryId` INNER JOIN gallery_tag ON gallery_tag.GalleryId = `Image`.`GalleryId` ';
+
+            if (options.code) {
+                 sql = sql.concat(`WHERE (\`Image\`.\`primaryImage\` = 1 AND  gallery.code is null)  OR  (\`Image\`.\`primaryImage\` = 1 AND gallery.code = '${options.code}')`);
+            } else {
+                 sql = sql.concat(`WHERE (\`Image\`.\`primaryImage\` = 1 AND  gallery.code is null) `);
+            }
+            sql = sql.concat(' GROUP BY `Image`.`GalleryId`');
+
+
+
+
+          //SELECT `Image`.`id`, `Image`.`key`, `Image`.`GalleryId`, `Image`.`name`, `Image`.`description`, `Image`.`primaryImage`, (SELECT CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('TagId', TagId)),']') as JSON) as tags FROM gallery_tag where gallery_tag.GalleryId = `Image`.`GalleryId`), `gallery_tag`.`TagId`, gallery.name, gallery_tag.GalleryId FROM `image` AS `Image` INNER JOIN gallery ON gallery.id = `Image`.`GalleryId` INNER JOIN gallery_tag ON gallery_tag.GalleryId = `Image`.`GalleryId`  WHERE `Image`.`primaryImage` = 1 GROUP BY `Image`.`GalleryId`;
        
           //   SELECT CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('TagId', TagId)),']') as JSON) as tags FROM gallery_tag where GalleryId = 'model-workshop-april-2011';
           return await sequelize.query(sql).then(galleries => {
