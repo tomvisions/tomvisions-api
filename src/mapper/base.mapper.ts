@@ -2,6 +2,12 @@ import nJwt from 'njwt';
 import dotenv from "dotenv";
 import * as uuid from 'uuid';
 import { s3Mapper } from './s3.mapper';
+import {SequelizeApi} from "../db/Sequelize";
+import * as console from "console";
+import * as process from "process";
+//import {Sequelize} from "sequelize";
+
+
 dotenv.config();
 
 export interface PaginationResults {
@@ -27,8 +33,21 @@ The Base Mapper. Functions which are in common with others mappers are placed he
 export class BaseMapper {
     private _QUERY;
     private _DEFAULT_ORDER: string = 'ASC';
-
+    private _DATABASE_NAME: string = 'photo_gallery';
     private _PARAM_FRONTCLOUD = 'https://images.mamboleofc.ca'
+    private _SEQUELIZE;
+
+    /**
+     * Initalizing the Sequelize instance with the configuration data taken from file
+     * @param dbConfig
+     */
+    public initalizeSequelize() {
+
+        let options = JSON.parse(`{"host": "${process.env.DB_HOST}", "dialect": "mysql", "port":3306}`);
+
+        const sequelizeApi = new SequelizeApi(this._DATABASE_NAME,process.env.DB_USERNAME,process.env.DB_PASSWORD, options);//.initialize();
+        this._SEQUELIZE = sequelizeApi.initialize();
+     }
 
     public async processArray(listing) {
         if (listing.length) {
@@ -38,8 +57,7 @@ export class BaseMapper {
                 console.log(item.get)
                 listArray.push(item.get());
             }
-            console.log('the list')
-            console.log(listArray);    
+
             return listArray;
         }
 
@@ -98,8 +116,6 @@ export class BaseMapper {
         const page = body.pageIndex || 1;
         const size = body.pageSize || 10;
 
-        console.log('sdsdfsdf')
-        console.log(sort);
         if (sort === 'identifier' || sort === body.sort)
         {
             listClone.sort((a, b) => {
@@ -195,5 +211,13 @@ export class BaseMapper {
 
     set QUERY(value: string) {
         this._QUERY = value;
+    }
+
+    set DATABASE_NAME(value: string) {
+        this._DATABASE_NAME = value;
+    }
+
+    get SEQUELIZE() {
+        return this._SEQUELIZE;
     }
 }

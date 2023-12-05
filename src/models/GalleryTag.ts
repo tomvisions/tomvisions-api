@@ -4,8 +4,38 @@ import { Gallery } from "./Gallery";
 import { Tag } from "./Tag";
 const {DataTypes, Model, sequelize} = require('../db');
 
-class GalleryTag extends Model {}
+class GalleryTag extends Model {
 
+    /**
+     *
+     * @param sequelize
+     * @param Tag
+     */
+    public static initialize(sequelize, Tag) {
+        const galleryTag = this.init({
+            TagId: {
+                type: DataTypes.STRING,
+                primaryKey: true
+            },
+            GalleryId: {
+                type: DataTypes.STRING,
+            },
+            createdAt: {
+                type: DataTypes.DATE,
+            },
+            updatedAt: {
+                type: DataTypes.DATE,
+            }
+        }, {
+            modelName: 'GalleryTag', sequelize: sequelize, tableName:"gallery_tag"
+        });
+
+        galleryTag.Tag = Tag.hasMany(GalleryTag,  {sourceKey: "id", as: "gallery_tag",  foreignKey: 'TagId', onUpdate: 'cascade'})
+
+        return galleryTag;
+    }
+}
+/*
 GalleryTag.init({
     TagId: {
         type: DataTypes.STRING,
@@ -30,7 +60,6 @@ GalleryTag.init({
   //  }
 //});
 
-GalleryTag.Tag = Tag.hasMany(GalleryTag,  {sourceKey: "id", as: "gallery_tag",  foreignKey: 'TagId', onUpdate: 'cascade'})
 
 //Gallery.GalleryTag = Gallery.hasMany(GalleryTag,{sourceKey: "id", as: "gallery_tag", foreignKey: 'gallery_id', onUpdate: 'cascade'} )
 ///Tag.GalleryTag = Tag.hasMany(GalleryTag,  {sourceKey: "id", as: "gallery_tag",  foreignKey: 'tag_id', onUpdate: 'cascade'})

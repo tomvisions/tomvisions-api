@@ -1,11 +1,25 @@
 import { BaseMapper } from ".";
 import moment from "moment";
-import { GalleryTag, Tag } from "../models";
+import {Tag, GalleryTag} from "../models";
 import * as uuid from 'uuid';
 
 export class TagMapper extends BaseMapper {
     private _PARAMS_NAME: string = 'name';
     private _DEFAULT_SORT: string = 'name';
+
+
+
+    constructor() {
+        super();
+        this.DATABASE_NAME = 'photo_gallery';
+        this.initalizeSequelize()
+        this.initializeTag();
+    }
+
+
+    private async initializeTag() {
+        Tag.initialize(this.SEQUELIZE);
+    }
 
     public async createTag(params) { //: Promise<string[] | string> {
 

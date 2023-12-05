@@ -1,12 +1,30 @@
 import { BaseMapper } from ".";
-import { Image } from "../models";
+import {GalleryTag, Image, Tag} from "../models";
 import { paramsOptions } from ".";
 import { Gallery } from "../models/Gallery";
-import { sequelize } from "../db";
+//import { sequelize } from "../db";
 
 export class ImageMapper extends BaseMapper {
     private _PARAMS_NAME: string = 'name';
     private _DEFAULT_SORT: string = 'name';
+
+
+    constructor() {
+        super();
+        this.DATABASE_NAME = 'photo_gallery';
+        this.initalizeSequelize()
+        this.initializeImage();
+    }
+
+
+    private async initializeImage() {
+        const tag = Tag.initialize(this.SEQUELIZE);
+        const galleryTag = GalleryTag.initialize(this.SEQUELIZE, tag);
+        const gallery = Gallery.initialize(this.SEQUELIZE, tag, galleryTag)
+
+        Image.initialize(this.SEQUELIZE, gallery, galleryTag);
+    }
+
 
     /**
      * Update image based on Id
@@ -131,7 +149,7 @@ export class ImageMapper extends BaseMapper {
                 sql += ` AND GalleryId = "${options['id']}"`;
             }
             console.log(sql);
-            return await sequelize.query(sql).then(imageCount => {
+            return await this.SEQUELIZE.query(sql).then(imageCount => {
                 console.log('the count');
                 console.log(imageCount[0][0]['count']);
                 return imageCount[0][0]['count'];
@@ -168,7 +186,7 @@ export class ImageMapper extends BaseMapper {
           //SELECT `Image`.`id`, `Image`.`key`, `Image`.`GalleryId`, `Image`.`name`, `Image`.`description`, `Image`.`primaryImage`, (SELECT CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('TagId', TagId)),']') as JSON) as tags FROM gallery_tag where gallery_tag.GalleryId = `Image`.`GalleryId`), `gallery_tag`.`TagId`, gallery.name, gallery_tag.GalleryId FROM `image` AS `Image` INNER JOIN gallery ON gallery.id = `Image`.`GalleryId` INNER JOIN gallery_tag ON gallery_tag.GalleryId = `Image`.`GalleryId`  WHERE `Image`.`primaryImage` = 1 GROUP BY `Image`.`GalleryId`;
        
           //   SELECT CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('TagId', TagId)),']') as JSON) as tags FROM gallery_tag where GalleryId = 'model-workshop-april-2011';
-          return await sequelize.query(sql).then(galleries => {
+          return await this.SEQUELIZE.query(sql).then(galleries => {
 
                 return this.processImageArray(galleries[0])
             }).catch(err => {

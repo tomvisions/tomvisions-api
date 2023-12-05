@@ -16,7 +16,6 @@ export class GalleryController {
             //        return res.status(500).json({error: 'Not Authorized to access the API'})
             //      }
 
-            console.log('inside gallery')
             const options: paramsOptions = { pageIndex: 1, pageSize: 10, filterQuery: "", sort: galleryMapper.DEFAULT_SORT, order: galleryMapper.DEFAULT_ORDER };
                 
             Object.entries(req.params).map(([key, value]) => {
@@ -30,7 +29,8 @@ export class GalleryController {
             })
 
             const galleries = await galleryMapper.getAllGalleries(options);
-
+            console.log('go')
+            console.log(galleries);
             if (typeof galleries === 'string') {
                 return res.status(500).json({ errors_string: galleries })
             }

@@ -1,12 +1,12 @@
 "use strict";
-import { Gallery, GalleryTag } from "../models/";
+import {Gallery, GalleryTag, Tag} from "../models/";
 //import {gallery as Gallery, image as Image} from "../models/";
-import { BaseMapper, paramsOptions } from '.';
+import {BaseMapper, paramsOptions} from '.';
 import moment from "moment";
-import { hasSubscribers } from "diagnostics_channel";
+import {hasSubscribers} from "diagnostics_channel";
 import * as uuid from 'uuid';
-import { Image } from "../models/";
-import { Tag } from "../models/";
+import {Image} from "../models/";
+import {SequelizeApi} from "../db/Sequelize";
 
 export class GalleryMapper extends BaseMapper {
     private _PARAMS_ID: string = 'id';
@@ -14,20 +14,25 @@ export class GalleryMapper extends BaseMapper {
     private _DEFAULT_SORT: string = 'name';
     private _LIST_NAME: string = 'galleries';
 
+
+    constructor() {
+        super();
+        this.DATABASE_NAME = 'photo_gallery';
+        this.initalizeSequelize()
+        this.initializeGallery();
+    }
+
     public async getAllGalleries(params: paramsOptions) { //: Promise<string[] | string> {
         try {
+            console.log(params);
+            const offset = ((params.pageIndex - 1) * params.pageSize);
 
-
-            const offset = ((params.pageIndex-1) * params.pageSize)
-         
             const galleryConfig = {
-                attributes: { exclude: ['ImageId', 'GalleryTagTagId'] },
+                attributes: {exclude: ['ImageId', 'GalleryTagTagId']},
                 offset: offset,
                 limit: params.pageSize,
             }
-
             return await Gallery.findAll(galleryConfig).then(galleries => {
-
                 return this.processArray(galleries);
             }).catch(err => {
                 console.log('the error');
@@ -40,10 +45,22 @@ export class GalleryMapper extends BaseMapper {
         }
     }
 
+    private async initializeGallery() {
+        try {
+            const tag = await Tag.initialize(this.SEQUELIZE);
+            const galleryTag = GalleryTag.initialize(this.SEQUELIZE, tag);
+            Gallery.initialize(this.SEQUELIZE, tag, galleryTag);
+        } catch (error) {
+            console.log(error);
+
+        }
+    }
+
+
     /**
-     * 
-     * @param options 
-     * @returns 
+     *
+     * @param options
+     * @returns
      */
     public async updateGallery(options: paramsOptions, body) {
         try {
@@ -54,7 +71,7 @@ export class GalleryMapper extends BaseMapper {
             gallery.save();
 
 
-            await this.deleteGalleryTagsByParams({ where: { GalleryId: options.id } })
+            await this.deleteGalleryTagsByParams({where: {GalleryId: options.id}})
 
             body.tags.map(async (tag) => {
                 console.log('the tag');
@@ -80,7 +97,7 @@ export class GalleryMapper extends BaseMapper {
                 updatedAt: moment().format('YYYY-MM-DD'),
             };
 
-            return await GalleryTag.findOrCreate({ where: [{ GalleryId: GalleryId }, {TagId: TagId}], defaults: tag });
+            return await GalleryTag.findOrCreate({where: [{GalleryId: GalleryId}, {TagId: TagId}], defaults: tag});
         } catch (error) {
             console.log('the error');
             console.log(error);
@@ -101,26 +118,26 @@ export class GalleryMapper extends BaseMapper {
 
 
     /**
-     * 
-     * @param options 
-     * @returns 
+     *
+     * @param options
+     * @returns
      */
     public async getGalleryById(options: paramsOptions) {
         try {
             console.log('get gallery');
 
             const galleryParams = {
-               include: [
+                include: [
                     {
-                        Model: Tag,         
+                        Model: Tag,
                         association: Gallery.Tag,
                         required: false
                     },
-                ], 
-                where: { id: options.id },
+                ],
+                where: {id: options.id},
                 attributes: {exclude: ['ImageId', 'GalleryTagTagId']},
             }
-    
+
             return await Gallery.findOrCreate(galleryParams).then(data => {
 
                 return data[0];
@@ -129,7 +146,7 @@ export class GalleryMapper extends BaseMapper {
                 return err;
             })
         } catch (error) {
-           return error.toString();
+            return error.toString();
         }
     }
 
@@ -151,5 +168,6 @@ export class GalleryMapper extends BaseMapper {
     }
 }
 
-export const galleryMapper = new GalleryMapper();
+//export const galleryMapper = await (new GalleryMapper()).initialize();
 
+export const galleryMapper = new GalleryMapper();

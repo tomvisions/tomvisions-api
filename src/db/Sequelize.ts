@@ -37,8 +37,6 @@ export class SequelizeApi {
         this._username = username;
         this._password = password;
         this._options = options;
-
-        console.log(this);
     }
 
     /**
@@ -48,7 +46,7 @@ export class SequelizeApi {
       return new Sequelize(this._database, this._username, this._password, this._options);
     };
 }
-
+/*
 let options;
 
 if (process.env.NODE_ENV === 'dev') {
@@ -64,3 +62,4 @@ let sequelizeClass = new SequelizeApi(process.env.DB_NAME, process.env.DB_USERNA
 let sequelize = sequelizeClass.initialize();
 
 export {sequelize};
+*/
