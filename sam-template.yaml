@@ -160,7 +160,14 @@ Resources:
                         RestApiId: !Ref ExpressApi
                         Path: /api/v1/media/tag/new
                         Method: ANY
-    
+
+                Wedding:
+                    Type: Api
+                    Properties:
+                        RestApiId: !Ref ExpressApi
+                        Path: /api/v1/wedding
+                        Method: ANY
+
             Policies:
                 - SESBulkTemplatedCrudPolicy_v2:
                       IdentityName: tomvisions.com
