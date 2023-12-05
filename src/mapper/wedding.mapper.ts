@@ -25,7 +25,6 @@ export class WeddingMapper extends BaseMapper {
 
     public async getAllImages(params: paramsOptions) { //: Promise<string[] | string> {
         try {
-            console.log(params);
             const offset = ((params.pageIndex - 1) * params.pageSize);
 
             const galleryConfig = {
@@ -33,6 +32,7 @@ export class WeddingMapper extends BaseMapper {
                 offset: offset,
                 limit: params.pageSize,
             }
+
             return await Image.findAll(galleryConfig).then(galleries => {
                 return this.processArray(galleries);
             }).catch(err => {

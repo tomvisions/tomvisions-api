@@ -30,7 +30,7 @@ export class WeddingController {
                 return res.status(500).json({errors_string: wedding})
             }
 
-            //return res.status(200).json(wedding);
+            return res.status(200).json(wedding);
 
 
         } catch (error) {
