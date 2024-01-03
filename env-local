@@ -1,7 +1,0 @@
-TOKEN_SECRET=bb6b110c90bb98ad5751d7a94124118561dfe6fdf7d39c5705ab5ebdef2c7b5ebdaadc339de9ddcd949f6890f2345655684419bee3a9dc7f45d94f25484f1e89
-NODE_ENV=dev
-DATABASE=simpleplay
-USERNAME=root
-PASSWORD=linuxstyle
-MONGO_DATABASE=mongodb+srv://tomvisions:net123DBMaster@tomvisions-serverless-i.wdrkx.mongodb.net/mamboleofc-staging
-MONGO_LIVE_DATABASE=mongodb+srv://tomvisions:net123DBMaster@tomvisions-serverless-i.wdrkx.mongodb.net/mamboleofc-staging
