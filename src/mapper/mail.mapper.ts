@@ -72,7 +72,7 @@ export class MailMapper {
                 this._HTML_CONTENT = EmailMessaging.CONTACT_CONTENT_HTML;
                 this._TEXT_CONTENT = EmailMessaging.CONTACT_CONTENT_TEXT;
                 this._TO_PERSON = "Tom";
-                this._EMAIL_LOGO = imageService.loadImage200x200("logo-tomvisions.png")
+                this._EMAIL_LOGO = imageService.loadImage200x200("tomvisions-logo-email.png")
                 this._EMAIL_BANNER = imageService.loadImage600x300("waterfall-sm2.jpg")
                
                 this._params.TemplateData = `{\"NAME\":\"${this._TO_PERSON}\",\"EMAIL_LOGO\":\"${this._EMAIL_LOGO}\", \"EMAIL_BANNER\":\"${this._EMAIL_BANNER}\", \"SUBJECT_CONTENT\":\"${this._SUBJECT_CONTENT}\",\"HTML_CONTENT\":\"${this._HTML_CONTENT}\",\"PARAMS_CONTENT\":\"${this._PARAMS_CONTENT}\",  \"TEXT_CONTENT\":\"${this._TEXT_CONTENT}\"}`;
