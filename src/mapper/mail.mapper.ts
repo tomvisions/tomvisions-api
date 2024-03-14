@@ -1,14 +1,15 @@
 "use strict";
 
-import {SESClient, SendTemplatedEmailCommand} from '@aws-sdk/client-ses';
-import {emailParams} from '../data/email-params';
-import {emailHeader} from '../data/email.header';
-import {emailFooter} from '../data/email.footer';
-import {format} from 'util';
-import {EmailMessaging} from '../models/EmailMessaging';
+import { SESClient, SendTemplatedEmailCommand } from '@aws-sdk/client-ses';
+import { emailParams } from '../data/email-params';
+import { emailHeader } from '../data/email.header';
+import { emailFooter } from '../data/email.footer';
+import { format } from 'util';
+import { EmailMessaging } from '../models/EmailMessaging';
+import { imageService } from '../service';
 
 export interface Params {
-//    Destination
+    //    Destination
 }
 
 export class MailMapper {
@@ -28,10 +29,24 @@ export class MailMapper {
     private _PARAMS_MESSAGE: string = 'message';
     private _PARAMS_EMAIL_TYPE: string = 'email_type';
     private _PARAMS_NAME: string = 'name';
+    private _TO_PERSON
+    private _EMAIL_LOGO
+    private _EMAIL_BANNER
+    private _PARAMS_PHONE: string = 'phone';
+
+    private _PARAMS_BODY: string = 'body';
+    private _PARAMS_SUBJECT: string = 'subject';
+    private _PARAMS_CITY: string = 'city';
+    private _PARAMS_COUNTRY: string = 'country';
+    private _PARAMS_TEAM_NAME: string = 'team_name';
+    private _PARAMS_SCHOOL: string = 'school';
+    private _PARAMS_FORMER_CLUB: string = 'formerClub';
+    private _PARAMS_NHIS: string = 'nhis';
+    private _PARAMS_CONTENT: string = '';
 
 
     constructor() {
-        this._sesClient = new SESClient({'region': this._REGION});
+        this._sesClient = new SESClient({ 'region': this._REGION });
     }
 
 
@@ -40,36 +55,89 @@ export class MailMapper {
      * @param body
      */
     async prepareEmail(body) {
+        console.log('the email type');
+        console.log(this._emailType)
         this._params = emailParams;
-        await this.parseBody(body);
 
-        switch (this._emailType) {
+        await this.formatBody(body);
+        this._params.Source = 'tomc@tomvisions.com';
+        this._params.ReplyToAddresses = [];
+        this._params.Template = 'DefaultEmailTemplate';
+
+        switch (body[this._PARAMS_EMAIL_TYPE]) {
             case EmailMessaging.EMAIL_TYPE_CONTACT:
                 this._params.Destination.ToAddresses.push('tomc@tomvisions.com');
-                this._params.Source = 'tomc@tomvisions.com';
-                this._params.ReplyToAddresses = [];
-                this._params.Template = 'Contact';
-                await this.getContactEmail();
-                this._params.TemplateData = `{\"PHONE_CONTENT\":\"${this._phone}\",\"SUBJECT_CONTENT\":\"${this._SUBJECT_CONTENT}\",\"NAME_CONTENT\":\"${this._name}\", \"NAME\":\"Info\",\"HTML_CONTENT\":\"${this._HTML_CONTENT}\",\"EMAIL_CONTENT\":\"${this._email}\",  \"TEXT_CONTENT\":\"${this._TEXT_CONTENT}\"}`;
+
+                this._SUBJECT_CONTENT = EmailMessaging.CONTACT_SUBJECT;
+                this._HTML_CONTENT = EmailMessaging.CONTACT_CONTENT_HTML;
+                this._TEXT_CONTENT = EmailMessaging.CONTACT_CONTENT_TEXT;
+                this._TO_PERSON = "Tom";
+                this._EMAIL_LOGO = imageService.loadImage200x200("logo-tomvisions.png")
+                this._EMAIL_BANNER = imageService.loadImage600x300("waterfall-sm2.jpg")
+               
+                this._params.TemplateData = `{\"NAME\":\"${this._TO_PERSON}\",\"EMAIL_LOGO\":\"${this._EMAIL_LOGO}\", \"EMAIL_BANNER\":\"${this._EMAIL_BANNER}\", \"SUBJECT_CONTENT\":\"${this._SUBJECT_CONTENT}\",\"HTML_CONTENT\":\"${this._HTML_CONTENT}\",\"PARAMS_CONTENT\":\"${this._PARAMS_CONTENT}\",  \"TEXT_CONTENT\":\"${this._TEXT_CONTENT}\"}`;
                 break;
+
+
+            case EmailMessaging.EMAIL_TYPE_CONTACTUS:
+                this._params.Destination.ToAddresses.push('tcruicksh@gmail.com');
+
+                this._SUBJECT_CONTENT = EmailMessaging.CONTACTUS_SUBJECT;
+                this._HTML_CONTENT = EmailMessaging.CONTACTUS_CONTENT_HTML;
+                this._TEXT_CONTENT = EmailMessaging.CONTACTUS_CONTENT_TEXT;
+                this._TO_PERSON = "Tom";
+                this._EMAIL_LOGO = imageService.loadImage200x200("tomvisions-logo-email.png")
+                this._EMAIL_BANNER = imageService.loadImage600x300("waterfall-sm2.jpg")
+
+                this._params.TemplateData = `{\"NAME\":\"${this._TO_PERSON}\",\"EMAIL_LOGO\":\"${this._EMAIL_LOGO}\", \"EMAIL_BANNER\":\"${this._EMAIL_BANNER}\", \"SUBJECT_CONTENT\":\"${this._SUBJECT_CONTENT}\",\"HTML_CONTENT\":\"${this._HTML_CONTENT}\",\"PARAMS_CONTENT\":\"${this._PARAMS_CONTENT}\",  \"TEXT_CONTENT\":\"${this._TEXT_CONTENT}\"}`;
+                break;
+
+            case EmailMessaging.EMAIL_TYPE_REGISTER:
+                this._params.Destination.ToAddresses.push('tcruicksh@gmail.com');
+                this._SUBJECT_CONTENT = EmailMessaging.REGISTER_SUBJECT;
+                this._HTML_CONTENT = EmailMessaging.REGISTER_CONTENT_HTML;
+                this._TEXT_CONTENT = EmailMessaging.REGISTER_CONTENT_TEXT;
+                this._TO_PERSON = "Tom";
+                this._EMAIL_LOGO = imageService.loadImage200x200("tomvisions-logo-email.png")
+                this._EMAIL_BANNER = imageService.loadImage600x300("waterfall-sm2.jpg")
+
+                this._params.TemplateData = `{\"NAME\":\"${this._TO_PERSON}\",\"EMAIL_LOGO\":\"${this._EMAIL_LOGO}\", \"EMAIL_BANNER\":\"${this._EMAIL_BANNER}\", \"SUBJECT_CONTENT\":\"${this._SUBJECT_CONTENT}\",\"HTML_CONTENT\":\"${this._HTML_CONTENT}\",\"PARAMS_CONTENT\":\"${this._PARAMS_CONTENT}\",  \"TEXT_CONTENT\":\"${this._TEXT_CONTENT}\"}`;
+                break;
+
+            case EmailMessaging.EMAIL_TYPE_VOLUNTEER:
+                this._params.Destination.ToAddresses.push('tcruicksh@gmail.com');
+
+                this._SUBJECT_CONTENT = EmailMessaging.VOLUNTEER_SUBJECT;
+                this._HTML_CONTENT = EmailMessaging.VOLUNTEER_CONTENT_HTML;
+                this._TEXT_CONTENT = EmailMessaging.VOLUNTEER_CONTENT_TEXT;
+                this._TO_PERSON = "GO now";
+                this._params.TemplateData = `{\"NAME\":\"${this._TO_PERSON}\",\"EMAIL_LOGO\":\"${this._EMAIL_LOGO}\", \"EMAIL_BANNER\":\"${this._EMAIL_BANNER}\", \"SUBJECT_CONTENT\":\"${this._SUBJECT_CONTENT}\",\"HTML_CONTENT\":\"${this._HTML_CONTENT}\",\"PARAMS_CONTENT\":\"${this._PARAMS_CONTENT}\",  \"TEXT_CONTENT\":\"${this._TEXT_CONTENT}\"}`;
+                break;
+
+            case EmailMessaging.EMAIL_TYPE_SPONSOR:
+                this._params.Destination.ToAddresses.push('tcruicksh@gmail.com');
+
+                this._SUBJECT_CONTENT = EmailMessaging.SPONSOR_SUBJECT;
+                this._HTML_CONTENT = EmailMessaging.SPONSOR_CONTENT_HTML;
+                this._TEXT_CONTENT = EmailMessaging.SPONSOR_CONTENT_TEXT;
+                this._TO_PERSON = "GO now";
+                this._params.TemplateData = `{\"NAME\":\"${this._TO_PERSON}\",\"EMAIL_LOGO\":\"${this._EMAIL_LOGO}\", \"EMAIL_BANNER\":\"${this._EMAIL_BANNER}\", \"SUBJECT_CONTENT\":\"${this._SUBJECT_CONTENT}\",\"HTML_CONTENT\":\"${this._HTML_CONTENT}\",\"PARAMS_CONTENT\":\"${this._PARAMS_CONTENT}\",  \"TEXT_CONTENT\":\"${this._TEXT_CONTENT}\"}`;
+
+                break;
+
         }
     }
 
-    async parseBody(body) {
-        this._emailType = body[this._PARAMS_EMAIL_TYPE] || null;
-        this._message = body[this._PARAMS_MESSAGE] || null;
-        this._name = body[this._PARAMS_NAME] || null
-        this._email = body[this._PARAMS_EMAIL] || null;
+    async formatBody(body) {
+        this._PARAMS_CONTENT = '';
+        Object.keys(body).map((key) => {
+            this._PARAMS_CONTENT = this._PARAMS_CONTENT.concat(format(EmailMessaging.PARAMS_CONTENT, key, body[key]));
 
-    }
-
-    async getContactEmail() {
-        this._SUBJECT_CONTENT = format(EmailMessaging.CONTACT_SUBJECT, 'You have received an email Contact Form')
-        this._HTML_CONTENT = format(EmailMessaging.CONTACT_CONTENT_HTML, this._message);
-        this._TEXT_CONTENT = format(EmailMessaging.CONTACT_CONTENT_TEXT, this._message);
+        });
     }
 
     async apiSendMail() {
+        console.log(this._params);
         return await this._sesClient.send(new SendTemplatedEmailCommand(this._params));
     }
 
@@ -88,6 +156,15 @@ export class MailMapper {
     get PARAMS_MESSAGE(): string {
         return this._PARAMS_MESSAGE;
     }
+
+    get PARAMS_PHONE(): string {
+        return this._PARAMS_PHONE;
+    }
+
+    get PARAMS_BODY(): string {
+        return this._PARAMS_BODY;
+    }
+
 }
 
 export const mailMapper = new MailMapper();

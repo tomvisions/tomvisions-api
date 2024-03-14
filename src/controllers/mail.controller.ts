@@ -11,14 +11,27 @@ export class MailController {
             "contact" :  [
                 mailMapper.PARAMS_MESSAGE, mailMapper.PARAMS_EMAIL_TYPE, mailMapper.PARAMS_NAME, mailMapper.PARAMS_EMAIL
             ],
+            "contact_us" :  [
+                mailMapper.PARAMS_MESSAGE, mailMapper.PARAMS_EMAIL_TYPE, mailMapper.PARAMS_NAME, mailMapper.PARAMS_EMAIL
+            ],
+            "sponsor" :  [
+                mailMapper.PARAMS_MESSAGE, mailMapper.PARAMS_EMAIL_TYPE, mailMapper.PARAMS_NAME, mailMapper.PARAMS_EMAIL
+            ],
+
+            "register" :  [
+                mailMapper.PARAMS_EMAIL_TYPE, mailMapper.PARAMS_NAME, mailMapper.PARAMS_EMAIL, mailMapper.PARAMS_PHONE,  mailMapper.PARAMS_BODY
+            ],
         }
 
         const missingParam = [];
         let valid = true;
         try {
-            Object.values(params[req.body[mailMapper.PARAMS_EMAIL_TYPE]]).map(param   => {
 
-                if (!req.body[param+'']) {
+            const paramCheck:string[] = params[req.body[mailMapper.PARAMS_EMAIL_TYPE]]
+            
+            Object.values(paramCheck).map(param   => {
+                    console.log(param);
+            if (!req.body[param]) {
                     valid = false;
                     missingParam.push(param);
                 }

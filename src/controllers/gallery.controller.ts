@@ -29,8 +29,7 @@ export class GalleryController {
             })
 
             const galleries = await galleryMapper.getAllGalleries(options);
-            console.log('go')
-            console.log(galleries);
+     
             if (typeof galleries === 'string') {
                 return res.status(500).json({ errors_string: galleries })
             }
