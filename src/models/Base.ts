@@ -1,3 +1,3 @@
 export class Base {
-    static PARAM_FRONTCLOUD = 'https://images.mamboleofc.ca';
+    static PARAM_FRONTCLOUD = 'https://images.tomvisions.com';
 }

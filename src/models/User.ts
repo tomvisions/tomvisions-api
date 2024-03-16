@@ -3,7 +3,7 @@ const {DataTypes, Model} = require("sequelize");
 import {S3Mapper} from "../mapper/s3.mapper";
 
 class User extends Model {
-    static PARAM_FRONTCLOUD = 'https://images.mamboleofc.ca'
+    static PARAM_FRONTCLOUD = 'https://images.tomvisions.com'
 
     private avatar:string;
 

@@ -34,7 +34,7 @@ export class BaseMapper {
     private _QUERY;
     private _DEFAULT_ORDER: string = 'ASC';
     private _DATABASE_NAME: string = 'photo_gallery';
-    private _PARAM_FRONTCLOUD = 'https://images.mamboleofc.ca'
+    private _PARAM_FRONTCLOUD = 'https://images.tomvisions.com'
     private _SEQUELIZE;
 
     /**

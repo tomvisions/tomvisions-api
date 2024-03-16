@@ -5,7 +5,7 @@ const {DataTypes, Model} = require('../db');
 //import { GalleryTag } from "./GalleryTag";
 import { s3Mapper } from "../mapper";
 class Image extends Model {
-    static PARAM_FRONTCLOUD = 'https://d34wc8uzk8vrsx.cloudfront.net'
+    static PARAM_FRONTCLOUD = 'https://images.tomvisions.com'
     //static PARAM_LOCATION = ''
 
     public static initialize(sequelize, Gallery, GalleryTag) {
