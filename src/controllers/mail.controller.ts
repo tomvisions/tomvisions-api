@@ -15,11 +15,13 @@ export class MailController {
                 mailMapper.PARAMS_MESSAGE, mailMapper.PARAMS_EMAIL_TYPE, mailMapper.PARAMS_NAME, mailMapper.PARAMS_EMAIL
             ],
             "sponsor" :  [
-                mailMapper.PARAMS_MESSAGE, mailMapper.PARAMS_EMAIL_TYPE, mailMapper.PARAMS_NAME, mailMapper.PARAMS_EMAIL
+               mailMapper.PARAMS_EMAIL_TYPE, mailMapper.PARAMS_EMAIL
             ],
-
+            "volunteer" :  [
+                mailMapper.PARAMS_EMAIL_TYPE, mailMapper.PARAMS_NAME, mailMapper.PARAMS_EMAILORPHONE
+            ],
             "register" :  [
-                mailMapper.PARAMS_EMAIL_TYPE, mailMapper.PARAMS_NAME, mailMapper.PARAMS_EMAIL, mailMapper.PARAMS_PHONE,  mailMapper.PARAMS_BODY
+                mailMapper.PARAMS_EMAIL_TYPE
             ],
         }
 

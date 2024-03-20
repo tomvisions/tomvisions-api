@@ -13,7 +13,7 @@ export class EmailMessaging
     static CONTACT_CONTENT_TEXT = `You have received a message from the Contact Form:\\n%s`;
     static CONTACT_CONTENT_HTML = '<p>You have received a message from the Contact Form:</p><p>%s</p>';
 
-    static CONTACTUS_SUBJECT = 'Email From Contact Us';
+    static CONTACTUS_SUBJECT = 'Email From Information Page';
     static CONTACTUS_CONTENT_TEXT = `You have received a message from the Contact Us Form:\\n`;
     static CONTACTUS_CONTENT_HTML = '<p>You have received a message from the Contact Us Form:</p>';
 
@@ -22,11 +22,11 @@ export class EmailMessaging
     static REGISTER_CONTENT_HTML = '<p>You have received a submission from register form:</p>';
 
     static VOLUNTEER_SUBJECT = 'Email From Volunteer Form';
-    static VOLUNTEER_CONTENT_TEXT = `You have received a message from the Membership Form:\\n`;
+    static VOLUNTEER_CONTENT_TEXT = `You have received a message from the Volunteer Form:\\n`;
     static VOLUNTEER_CONTENT_HTML = '<p>You have received a message from the Membership Form:</p>';
 
     static SPONSOR_SUBJECT = 'Email From Sponsor Form';
-    static SPONSOR_CONTENT_TEXT = `You have received a message from the Membership Form:\\n`;
+    static SPONSOR_CONTENT_TEXT = `You have received a message from the Sponsor Form:\\n`;
     static SPONSOR_CONTENT_HTML = '<p>You have received a message from the Membership Form:</p>';
 
     static PARAMS_CONTENT = '<p>%s: %s</p>';
