@@ -29,6 +29,7 @@ export class MailMapper {
     private _PARAMS_MESSAGE: string = 'message';
     private _PARAMS_EMAIL_TYPE: string = 'email_type';
     private _PARAMS_NAME: string = 'name';
+    private _PARAMS_SUBJECT: string = 'subject';
     private _TO_PERSON
     private _EMAIL_LOGO
     private _EMAIL_BANNER
@@ -36,7 +37,6 @@ export class MailMapper {
     private _PARAMS_EMAILORPHONE: string = 'emailOrPhone';
 
     private _PARAMS_BODY: string = 'body';
-    private _PARAMS_SUBJECT: string = 'subject';
     private _PARAMS_CITY: string = 'city';
     private _PARAMS_COUNTRY: string = 'country';
     private _PARAMS_TEAM_NAME: string = 'team_name';
@@ -194,6 +194,11 @@ export class MailMapper {
     get PARAMS_EMAILORPHONE(): string {
         return this._PARAMS_EMAILORPHONE;
     }
+
+    get PARAMS_SUBJECT(): string {
+        return this._PARAMS_SUBJECT;
+    }
 }
+
 
 export const mailMapper = new MailMapper();

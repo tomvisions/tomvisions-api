@@ -12,7 +12,7 @@ export class MailController {
                 mailMapper.PARAMS_MESSAGE, mailMapper.PARAMS_EMAIL_TYPE, mailMapper.PARAMS_NAME, mailMapper.PARAMS_EMAIL
             ],
             "contact_us" :  [
-                mailMapper.PARAMS_MESSAGE, mailMapper.PARAMS_EMAIL_TYPE, mailMapper.PARAMS_NAME, mailMapper.PARAMS_EMAIL
+                mailMapper.PARAMS_MESSAGE, mailMapper.PARAMS_EMAIL_TYPE, mailMapper.PARAMS_NAME, mailMapper.PARAMS_SUBJECT, mailMapper.PARAMS_EMAILORPHONE
             ],
             "sponsor" :  [
                mailMapper.PARAMS_EMAIL_TYPE, mailMapper.PARAMS_EMAIL
