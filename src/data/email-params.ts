@@ -1,6 +1,6 @@
 export const emailParams = {
     Destination: {
-        CcAddresses: [], ToAddresses: []
+        CcAddresses: [], ToAddresses: [], BccAddresses: []
     },
     Source: '',
     ReplyToAddresses: [],

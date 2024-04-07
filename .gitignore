@@ -9,3 +9,4 @@ boot.
 .history
 .idea
 cdk
+.aws-sam

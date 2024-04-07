@@ -22,6 +22,7 @@ export class MailMapper {
     private _name;
     private _email;
     private _params;
+    private _paramsGroup: string[];
     private _SUBJECT_CONTENT;
     private _HTML_CONTENT;
     private _TEXT_CONTENT;
@@ -56,10 +57,7 @@ export class MailMapper {
      * @param body
      */
     async prepareEmail(body) {
-        console.log('the email type');
-        console.log(this._emailType)
         this._params = emailParams;
-
         await this.formatBody(body);
         this._params.Source = 'tomc@tomvisions.com';
         this._params.ReplyToAddresses = [];
@@ -77,6 +75,7 @@ export class MailMapper {
                 this._EMAIL_BANNER = imageService.loadImage600x300("waterfall-sm2.jpg")
                
                 this._params.TemplateData = `{\"NAME\":\"${this._TO_PERSON}\",\"EMAIL_LOGO\":\"${this._EMAIL_LOGO}\", \"EMAIL_BANNER\":\"${this._EMAIL_BANNER}\", \"SUBJECT_CONTENT\":\"${this._SUBJECT_CONTENT}\",\"HTML_CONTENT\":\"${this._HTML_CONTENT}\",\"PARAMS_CONTENT\":\"${this._PARAMS_CONTENT}\",  \"TEXT_CONTENT\":\"${this._TEXT_CONTENT}\"}`;
+
                 break;
 
 
@@ -103,8 +102,23 @@ export class MailMapper {
                 this._TO_PERSON = "Richard";
                 this._EMAIL_LOGO = imageService.loadImage200x200("kofc-logo.png")
                 this._EMAIL_BANNER = imageService.loadImage600x300("loch-march-background.jpeg")
-
                 this._params.TemplateData = `{\"NAME\":\"${this._TO_PERSON}\",\"EMAIL_LOGO\":\"${this._EMAIL_LOGO}\", \"EMAIL_BANNER\":\"${this._EMAIL_BANNER}\", \"SUBJECT_CONTENT\":\"${this._SUBJECT_CONTENT}\",\"HTML_CONTENT\":\"${this._HTML_CONTENT}\",\"PARAMS_CONTENT\":\"${this._PARAMS_CONTENT}\",  \"TEXT_CONTENT\":\"${this._TEXT_CONTENT}\"}`;
+                await this.apiSendMail();
+
+
+                this._params.Destination.ToAddresses = [];
+                this._params.Destination.ToAddresses.push(body['players'][0]['email']);
+                this._params.Destination.BccAddresses.push('tomc@tomvisions.com');
+
+                this._SUBJECT_CONTENT = EmailMessaging.REGISTERCONTACTSENDER_SUBJECT;
+                this._HTML_CONTENT = EmailMessaging.REGISTERCONTACTSENDER_CONTENT_HTML;
+                this._TEXT_CONTENT = EmailMessaging.REGISTERCONTACTSENDER_CONTENT_TEXT;
+                this._TO_PERSON = body['players'][0]['player'];
+                this._EMAIL_LOGO = imageService.loadImage200x200("kofc-logo.png")
+                this._EMAIL_BANNER = imageService.loadImage600x300("loch-march-background.jpeg")
+                this._PARAMS_CONTENT = '';
+                this._params.TemplateData = `{\"NAME\":\"${this._TO_PERSON}\",\"EMAIL_LOGO\":\"${this._EMAIL_LOGO}\", \"EMAIL_BANNER\":\"${this._EMAIL_BANNER}\", \"SUBJECT_CONTENT\":\"${this._SUBJECT_CONTENT}\",\"HTML_CONTENT\":\"${this._HTML_CONTENT}\",\"PARAMS_CONTENT\":\"${this._PARAMS_CONTENT}\",  \"TEXT_CONTENT\":\"${this._TEXT_CONTENT}\"}`;
+
                 break;
 
             case EmailMessaging.EMAIL_TYPE_VOLUNTEER:
@@ -147,8 +161,6 @@ export class MailMapper {
     }
 
     checkObject(data) {
-
-
         if (typeof data === 'string') {
             return data;
         }

@@ -12,7 +12,7 @@
         "domainStage": "api-stage.tomvisions.com",
         "domainProduction": "api.tomvisions.com",
         "certificate": "tomvisions.ca",
-        "bucketNameImages": "tomvisions-original-images"
+        "bucketNameImages": "images.mamboleofc.ca"
     },
     "scripts": {
         "build": "tsc --project .",
