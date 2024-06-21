@@ -7,6 +7,8 @@ phases:
     commands:
       - git config --global credential.helper '!aws --region us-east-1 codecommit credential-helper $@'
       - git config --global credential.UseHttpPath true
+      - echo $WORKDIR
+      - echo "Hello"
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
