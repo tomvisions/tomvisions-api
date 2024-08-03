@@ -215,7 +215,7 @@ Resources:
                 DefaultCacheBehavior:
                     Compress: "true"
                     AllowedMethods:
-                        - [HEAD, GET]
+                        - [ HEAD, GET ]
                     TargetOriginId: ApiOrigin
                     ViewerProtocolPolicy: "allow-all"
                     CachePolicyId: "742eb823-1ef3-4032-8765-be3ea4bddc50"
