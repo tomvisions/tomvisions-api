@@ -215,13 +215,13 @@ Resources:
                 DefaultCacheBehavior:
                     Compress: "true"
                     AllowedMethods:
-                        - GET
                         - HEAD
+                        - DELETE
+                        - POST
+                        - GET
                         - OPTIONS
                         - PUT
-                        - POST
-                        - PATCH
-                        - DELETE
+                        - PATH
                     TargetOriginId: ApiOrigin
                     ViewerProtocolPolicy: "allow-all"
                     CachePolicyId: "742eb823-1ef3-4032-8765-be3ea4bddc50"
