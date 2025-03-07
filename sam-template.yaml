@@ -87,85 +87,85 @@ Resources:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/mail
+                        Path: /mail
                         Method: ANY
                 Media:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/media
+                        Path: /media
                         Method: ANY
                 MediaId:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/media/id/{id}
+                        Path: /media/id/{id}
                         Method: ANY
                 MediaImagesByIdPagination:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/media/id/{id}/image/{pageIndex}/{pageSize}/{sort}/{order}
+                        Path: /media/id/{id}/image/{pageIndex}/{pageSize}/{sort}/{order}
                         Method: ANY
                 MediaImagesPrimary:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/media/primary
+                        Path: /media/primary
                         Method: GET
                 MediaImagesPrimaryWithCode:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/media/primary/{code}
+                        Path: /media/primary/{code}
                         Method: GET
 
                 MediaImagesAllGalleries:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/media/page-index/{pageIndex}/page-size/{pageSize}/{sort}/{order}
+                        Path: /media/page-index/{pageIndex}/page-size/{pageSize}/{sort}/{order}
                         Method: ANY
 
                 MediaAllImages:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/media/image/age-index/{pageIndex}/page-size/{pageSize}/{sort}/{order}
+                        Path: /media/image/age-index/{pageIndex}/page-size/{pageSize}/{sort}/{order}
                         Method: ANY
                 MediaImagesById:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/media/image/id/{id}
+                        Path: /media/image/id/{id}
                         Method: ANY
 
                 MediaAllTags:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/media/tag/page-index/{pageIndex}/page-size/{pageSize}/{sort}/{query}
+                        Path: /media/tag/page-index/{pageIndex}/page-size/{pageSize}/{sort}/{query}
                         Method: ANY
 
                 MediaTagByLabelValue:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/media/tag/list
+                        Path: /media/tag/list
                         Method: ANY
 
                 MediaNewTag:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/media/tag/new
+                        Path: /media/tag/new
                         Method: ANY
 
                 Wedding:
                     Type: Api
                     Properties:
                         RestApiId: !Ref ExpressApi
-                        Path: /api/v1/wedding
+                        Path: /wedding
                         Method: ANY
 
             Policies:
