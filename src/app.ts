@@ -28,10 +28,10 @@ app.use(async (req, res, next) => {
   next()
 });
 
-app.use("/api/v1/mail", mailRouter);
-app.use("/api/v1/media", mediaRouter);
-app.use("/api/v1/user", userRouter);
-app.use("/api/v1/wedding", weddingRouter);
+app.use("/mail", mailRouter);
+app.use("/media", mediaRouter);
+app.use("/user", userRouter);
+app.use("/wedding", weddingRouter);
 
 
 app.use("/", express);
