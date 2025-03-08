@@ -75,7 +75,7 @@ Resources:
         Properties:
             CodeUri: ./dist
             PackageType: Zip
-            Runtime: nodejs18.x
+            Runtime: nodejs20.x
             Handler: lambda.handler
             Environment:
                 Variables:
