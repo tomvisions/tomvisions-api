@@ -13,8 +13,8 @@
         "cacheIdProduction": "6334812b9-d5d9-41ac-a8f0-55cb6b4b37b8",
         "domainStage": "api-stage.tomvisions.com",
         "domainProduction": "api.tomvisions.com",
-        "certificate": "tomvisions.ca",
-        "bucketNameImages": "images.mamboleofc.ca"
+        "certificate": "tomvisions.com",
+        "bucketNameImages": "images.tomviisons.com"
     },
     "scripts": {
         "build": "tsc --project .",
