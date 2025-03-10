@@ -14,7 +14,7 @@
         "domainStage": "api-stage.tomvisions.com",
         "domainProduction": "api.tomvisions.com",
         "certificate": "tomvisions.comr",
-        "bucketNameImages": "images.tomviisons.com"
+        "bucketNameImages": "images.tomvisions.com"
     },
     "scripts": {
         "build": "tsc --project .",
