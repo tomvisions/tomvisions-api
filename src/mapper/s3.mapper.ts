@@ -167,7 +167,7 @@ console.log('start of write disk');
      */
     public resizeWithInS3(key: string, edits: EditProperties) {
         const imageRequest = JSON.stringify({
-            bucket: "tomvisions-original-images",
+            bucket: "images.tomvisions.com",
             key: key,
             edits: edits
         })

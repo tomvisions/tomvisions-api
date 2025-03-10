@@ -10,7 +10,7 @@
         "cloudFormationStackNameStage": "tomvisionsAPIStageStack",
         "cloudFormationStackNameProduction": "tomvisionsAPIProdStack",
         "cacheIdStage": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
-        "cacheIdProduction": "334812b9-d5d9-41ac-a8f0-55cb6b4b37b8",
+        "cacheIdProduction": "93a176d8-5972-42c8-9e45-6821854dac3e",
         "domainStage": "api-stage.tomvisions.com",
         "domainProduction": "api.tomvisions.com",
         "certificate": "tomvisions.comr",
