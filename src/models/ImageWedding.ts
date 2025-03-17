@@ -1,47 +1,22 @@
 "use strict";
 
-const {DataTypes, Model} = require('../db');
+import {int, mysqlTable, tinyint, varchar} from "drizzle-orm/mysql-core";
+
 //import { Gallery } from "./Gallery";
 //import { GalleryTag } from "./GalleryTag";
 import { s3Mapper } from "../mapper";
-class Image extends Model {
-    static PARAM_FRONTCLOUD = 'https://d34wc8uzk8vrsx.cloudfront.net'
-    //static PARAM_LOCATION = ''
 
-    public static initialize(sequelize) {
-       return this.init({
-            id: {
-                type: DataTypes.STRING,
-                primaryKey: true
-            },
+export const imageWedding = mysqlTable('image', {
+    id:  varchar('id', { length: 36 }).primaryKey(),
+    key: varchar('key', {length: 255}).notNull(),
+    GalleryId: varchar('GalleryId', {length: 255}).notNull(),
+    name: varchar('name', {length: 255}).notNull(),
+    description: varchar('description', {length: 255}),
+    orientation: int('orientation'),
+//    createdAt:timestamp().defaultNow(),
+    //  updatedAt: timestamp().defaultNow(),
+})
 
-
-            key: {
-                type: DataTypes.STRING,
-            },
-            GalleryId: {
-                type: DataTypes.STRING,
-            },
-            name: {
-                type: DataTypes.STRING,
-            },
-            createdAt: {
-                type: DataTypes.DATE,
-            },
-            updatedAt: {
-                type: DataTypes.DATE,
-            },
-            orientation: {
-                type: DataTypes.SMALLINT,
-            },
-
-
-        }, {
-            modelName: 'Image', sequelize: sequelize, tableName:"image"
-        });
-    }
-
-}
 
 /*
 //Image.belongsTo(Gallery)
@@ -65,4 +40,4 @@ Image.GalleryTag = Image.belongsToMany(GalleryTag, { through: Gallery, throughAs
   },} );
 
  */
-export {Image}
+

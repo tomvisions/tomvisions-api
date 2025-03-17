@@ -3,7 +3,7 @@ import {BaseMapper} from "./base.mapper";
 
 import {User} from "../models";
 //import { User} from "../models";
-import {or} from "../db";
+
 import dotenv from 'dotenv';
 import * as uuid from 'uuid';
 import moment from "moment";

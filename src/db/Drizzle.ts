@@ -1,29 +1,16 @@
-import  {Sequelize, Dialect} from '.';
 import dotenv from "dotenv";
+import mysql from 'mysql2/promise';
 dotenv.config();
-
-export interface OptionsSequelize {
-    host:string;
-    dialect: Dialect;
-    port:number;
-}
-
-export interface DBOptions {
-    DB_NAME: string
-    DB_USERNAME: string
-    DB_PASSWORD: string
-    DB_HOST: string
-    NODE_ENV: string
-}
+import { drizzle } from 'drizzle-orm/mysql2';
 
 /**
  * SequelizeApi class. A class that deals with working with Sequelize
  */
-export class SequelizeApi {
+export class DrizzleAPI {
     private _database: string;
     private _username: string;
     private _password: string;
-    private _options: OptionsSequelize;
+    private _host:string;
 
     /**
      * Constructor for class
@@ -32,18 +19,28 @@ export class SequelizeApi {
      * @param password
      * @param options
      */
-    constructor(database: string, username: string, password: string, options: OptionsSequelize) {
+    constructor(database: string, username: string, password: string, host:string) {
         this._database = database;
         this._username = username;
         this._password = password;
-        this._options = options;
+        this._host = host;
     }
 
     /**
      * Initialization function for sequelize
      */
     public initialize() {
-      return new Sequelize(this._database, this._username, this._password, this._options);
+
+        const pool = mysql.createPool({
+            host: this._host,
+            port: 3306,
+            user: this._username,
+            password: this._password,
+            database: this._database,
+
+        });
+
+        return drizzle(pool, { logger: true })
     };
 }
 /*

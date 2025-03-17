@@ -1,7 +1,8 @@
 import { BaseMapper } from ".";
-import {GalleryTag, Image, Tag} from "../models";
+import {gallery, galleryTag, image, tag} from "../models";
 import { paramsOptions } from ".";
-import { Gallery } from "../models/Gallery";
+import { eq, and , sql, count} from 'drizzle-orm';
+
 //import { sequelize } from "../db";
 
 export class ImageMapper extends BaseMapper {
@@ -12,19 +13,8 @@ export class ImageMapper extends BaseMapper {
     constructor() {
         super();
         this.DATABASE_NAME = 'photo_gallery';
-        this.initalizeSequelize()
-        this.initializeImage();
+        this.initializeDrizzle();
     }
-
-
-    private async initializeImage() {
-        const tag = Tag.initialize(this.SEQUELIZE);
-        const galleryTag = GalleryTag.initialize(this.SEQUELIZE, tag);
-        const gallery = Gallery.initialize(this.SEQUELIZE, tag, galleryTag)
-
-        Image.initialize(this.SEQUELIZE, gallery, galleryTag);
-    }
-
 
     /**
      * Update image based on Id
@@ -34,13 +24,9 @@ export class ImageMapper extends BaseMapper {
      */
     public async updateImageById(id, body) {
         try {
-            const image = await this.getImageById(id);
+            const imageQuery = this.DRIZZLE.update(image).set({description: body.description, primaryImage: body.primaryImage}).where(eq(image.id, id))
 
-            image.description = body.description;
-            image.primaryImage = body.primaryImage
-            image.save();
-
-            return image;
+            return this.getSQLData(imageQuery.toSQL())
 
         } catch (error) {
             return error.toString();
@@ -55,24 +41,10 @@ export class ImageMapper extends BaseMapper {
     public async getImageById(id) {
         try {
 
-            const imageConfig = {
-                include: [{
-                    attributes: { exclude: ['ImageId', 'GalleryTagTagId'] },
-                    association: Image.Gallery,
-                    required: true
-                },
-                ],
-                where: {
-                    id: id
-                },
-            }
+            const imageQuery = this.DRIZZLE.select().from(image).innerJoin(gallery, eq(image.GalleryId, gallery.id)).where(eq(image.id, id))
 
-            return await Image.findOrCreate(imageConfig).then(data => {
-                console.log(data);
-                return data[0];
-            }).catch(err => {
-                return err;
-            })
+            return this.getSQLData(imageQuery.toSQL())
+
         } catch (error) {
             return error.toString();
         }
@@ -81,22 +53,9 @@ export class ImageMapper extends BaseMapper {
     public async deleteImageById(id) {
         try {
 
-            const imageConfig = {
-                where: {
-                    id: id
-                },
-            }
+            const imageQuery = this.DRIZZLE.update(image).set(image.active, 0).where(eq(image.id, id))
 
-            const image = await Image.findOrCreate(imageConfig).then(data => {
-
-                return data[0];
-            }).catch(err => {
-                return err;
-            })
-
-            image.active = 0;
-            image.save();
-
+            this.getSQLData(imageQuery.toSQL())
             return true;
 
         } catch (error) {
@@ -113,23 +72,19 @@ export class ImageMapper extends BaseMapper {
         let offset;
 
         try {
-            const offset = ((params.pageIndex - 1) * params.pageSize)
+            const images = this.DRIZZLE.select({
+                id: image.id,
+                key: image.key,
+                GalleryId: image.GalleryId,
+                name: image.name,
+                primaryImage: image.primaryImage,
+                description: image.description,
+                active: image.active,
+                orientation: image.orientation,
+                order: image.order,
+            }).from(image).where(eq(image.active, 1))
 
-            const imagesConfig = {
-                offset: offset,
-                limit: params.pageSize,
-                where: {
-                    active: 1
-                },
-            }
-
-            console.log('image config')
-            console.log(imagesConfig)
-            return await Image.findAll(imagesConfig).then(images => {
-                return this.processArray(images);
-            }).catch(err => {
-                return err;
-            })
+            return this.processArray(this.getSQLData(images.toSQL()))
         } catch (error) {
 
             return error.toString();
@@ -143,61 +98,66 @@ export class ImageMapper extends BaseMapper {
      */
     public async getListLength(options = null) {
         try {
+            const imagesCount = this.DRIZZLE.select({
+                count:count()}).from(image);
 
+            if (options) {
+                imagesCount. where(and(eq(image.active, 1), eq(image.GalleryId, options['id'])));
+            } else {
+                imagesCount. where(eq(image.active, 1))
+            }
+
+            const test = this.getSQLData(imagesCount.toSQL(), true)
+
+            return test
+            /*
             let sql = 'SELECT count(`id`) as count FROM image WHERE active = 1 ';
             if (options) {
                 sql += ` AND GalleryId = "${options['id']}"`;
             }
-            console.log(sql);
+//            console.log(sql);
             return await this.SEQUELIZE.query(sql).then(imageCount => {
-                console.log('the count');
-                console.log(imageCount[0][0]['count']);
                 return imageCount[0][0]['count'];
             }).catch(err => {
                 return err;
-            })
+            }) */
         } catch (error) {
             return error.toString();
         }
     }
+
+
     public async getAllPrimaryImages(options: paramsOptions) { //: Promise<string[] | string> {
         try {
+            const imagesByGallery = this.DRIZZLE.select({
+                id: image.id,
+                key: image.key,
+                GalleryId: image.GalleryId,
+                name: gallery.name,
+                primaryImage: image.primaryImage,
+                description: image.description,
+                active: image.active,
+                orientation: image.orientation,
+                order: image.order,
+                TagsId: sql<string>`(SELECT JSON_ARRAYAGG(JSON_OBJECT('TagId', ${galleryTag.TagId}))
+                                    FROM ${galleryTag}
+                                    where ${galleryTag.GalleryId} = ${image.GalleryId})`.as('TagsId')
+            }).from(image).innerJoin(gallery, eq(image.GalleryId, gallery.id))
 
 
-            // console.log(paramsWhere);
-       //     const sql = 'SELECT `Image`.`id`, `Image`.`key`, `Image`.`GalleryId`, `Image`.`name`, `Image`.`description`, `Image`.`primaryImage`, `gallery_tag`.`TagId`, gallery.name, gallery_tag.GalleryId FROM `image` AS `Image` INNER JOIN gallery ON gallery.id = `Image`.`GalleryId` INNER JOIN gallery_tag ON gallery_tag.GalleryId = `Image`.`GalleryId`  WHERE `Image`.`primaryImage` = 1';
-          //  const sql = 'SELECT `Image`.`id`, `Image`.`key`, `Image`.`GalleryId`, `Image`.`name`, `Image`.`description`, `Image`.`primaryImage`, `gallery_tag`.`TagId`, gallery.name, gallery_tag.GalleryId FROM `image` AS `Image` INNER JOIN gallery ON gallery.id = `Image`.`GalleryId` INNER JOIN gallery_tag ON gallery_tag.GalleryId = `Image`.`GalleryId`  WHERE `Image`.`primaryImage` = 1 GROUP BY `Image`.`GalleryId`;'
-
-
-
-        //  const sql = 'SELECT `Image`.`id`, `Image`.`key`, `Image`.`GalleryId`, `Image`.`name`, `Image`.`description`, `Image`.`primaryImage`, (SELECT CAST(CONCAT(\'[\',GROUP_CONCAT(JSON_OBJECT(\'TagId\', TagId)),\']\') as JSON) FROM gallery_tag where gallery_tag.GalleryId = `Image`.`GalleryId`) as TagsId, gallery.name, gallery_tag.GalleryId FROM `image` AS `Image` INNER JOIN gallery ON gallery.id = `Image`.`GalleryId` INNER JOIN gallery_tag ON gallery_tag.GalleryId = `Image`.`GalleryId`  WHERE `Image`.`primaryImage` = 1 GROUP BY `Image`.`GalleryId`;'
-            let sql = 'SELECT `Image`.`id`, `Image`.`key`, `Image`.`GalleryId`, `Image`.`name`, `Image`.`description`, `Image`.`primaryImage`, (SELECT CAST(CONCAT(\'[\',GROUP_CONCAT(JSON_OBJECT(\'TagId\', TagId)),\']\') as JSON) FROM gallery_tag where gallery_tag.GalleryId = `Image`.`GalleryId`) as TagsId, gallery.name, gallery_tag.GalleryId FROM `image` AS `Image` INNER JOIN gallery ON gallery.id = `Image`.`GalleryId` INNER JOIN gallery_tag ON gallery_tag.GalleryId = `Image`.`GalleryId` ';
+            //.where(eq(image.active, 1))
 
             if (options.code) {
-                 sql = sql.concat(`WHERE (\`Image\`.\`primaryImage\` = 1 AND  gallery.code is null)  OR  (\`Image\`.\`primaryImage\` = 1 AND gallery.code = '${options.code}')`);
+                imagesByGallery.where(eq(image.primaryImage, 1));
+                //= sqls.concat(`WHERE (\`Image\`.\`primaryImage\` = 1) AND (gallery.viewing  = 1 OR gallery.viewing = 0)`);
             } else {
-                 sql = sql.concat(`WHERE (\`Image\`.\`primaryImage\` = 1 AND  gallery.code is null) `);
+                imagesByGallery.where(and(eq(image.primaryImage, 1), eq(gallery.code, null)));
+
             }
-            sql = sql.concat(' GROUP BY `Image`.`GalleryId`');
+
+            return this.processImageArray(this.getSQLData(imagesByGallery.toSQL(), true))
 
 
-
-
-          //SELECT `Image`.`id`, `Image`.`key`, `Image`.`GalleryId`, `Image`.`name`, `Image`.`description`, `Image`.`primaryImage`, (SELECT CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('TagId', TagId)),']') as JSON) as tags FROM gallery_tag where gallery_tag.GalleryId = `Image`.`GalleryId`), `gallery_tag`.`TagId`, gallery.name, gallery_tag.GalleryId FROM `image` AS `Image` INNER JOIN gallery ON gallery.id = `Image`.`GalleryId` INNER JOIN gallery_tag ON gallery_tag.GalleryId = `Image`.`GalleryId`  WHERE `Image`.`primaryImage` = 1 GROUP BY `Image`.`GalleryId`;
-       
-          //   SELECT CAST(CONCAT('[',GROUP_CONCAT(JSON_OBJECT('TagId', TagId)),']') as JSON) as tags FROM gallery_tag where GalleryId = 'model-workshop-april-2011';
-          return await this.SEQUELIZE.query(sql).then(galleries => {
-
-                return this.processImageArray(galleries[0])
-            }).catch(err => {
-                return err;
-            })
-            /*            console.log(primaryImageConfig);
-                        return await Image.findAll(primaryImageConfig).then(galleries => {
-                            return this.processArray(galleries);
-                        }).catch(err => {
-                            return err;
-                        }) */
         } catch (error) {
 
             return error.toString();
@@ -213,20 +173,32 @@ export class ImageMapper extends BaseMapper {
         try {
 
             const offset = ((options.pageIndex - 1) * options.pageSize)
-            const images = {
-                where: [{ GalleryId: options.id }, {active:1}],
-                offset: offset,
-                limit: options.pageSize,
-                
-            }
 
-            return await Image.findAll(images).then(data => {
-                return this.processArray(data);
-            }).catch(err => {
-                return err;
-            })
+            const imagesByGallery = this.DRIZZLE.select({
+                id: image.id,
+                key: image.key,
+                GalleryId: image.GalleryId,
+                name: gallery.name,
+                primaryImage: image.primaryImage,
+                description: image.description,
+                active: image.active,
+                orientation: image.orientation,
+                order: image.order,
+                TagsId: sql<string>`(SELECT JSON_ARRAYAGG(JSON_OBJECT('TagId', ${galleryTag.TagId}))
+                                    FROM ${galleryTag}
+                                    where ${galleryTag.GalleryId} = ${image.GalleryId})`.as('TagsId')
+            }).from(image).innerJoin(gallery, eq(image.GalleryId, gallery.id))
+                .where(and(eq(image.GalleryId, options.id),
+                    eq(image.active, 1)
+                )).offset(offset).limit(options.pageSize)
+
+
+            const test = this.processArray(this.getSQLData(imagesByGallery.toSQL()))
+            return test
+
         } catch (error) {
             console.log(`Could not fetch galleries ${error}`)
+            return error.toString()
         }
     }
 

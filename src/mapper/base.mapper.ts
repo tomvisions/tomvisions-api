@@ -2,10 +2,10 @@ import nJwt from 'njwt';
 import dotenv from "dotenv";
 import * as uuid from 'uuid';
 import { s3Mapper } from './s3.mapper';
-import {SequelizeApi} from "../db/Sequelize";
-import * as console from "console";
-import * as process from "process";
-//import {Sequelize} from "sequelize";
+import {DrizzleAPI} from "../db/Drizzle";
+import * as console from "node:console";
+import * as process from "node:process";
+import axios from "axios";
 
 
 dotenv.config();
@@ -35,20 +35,12 @@ export class BaseMapper {
     private _DEFAULT_ORDER: string = 'ASC';
     private _DATABASE_NAME: string = 'photo_gallery';
     private _PARAM_FRONTCLOUD = 'https://images.tomvisions.com'
-    private _SEQUELIZE;
+    private _DRIZZLE;
 
-    /**
-     * Initalizing the Sequelize instance with the configuration data taken from file
-     * @param dbConfig
-     */
-    public initalizeSequelize() {
-
-        let options = JSON.parse(`{"host": "${process.env.DB_HOST}", "dialect": "mysql", "port":3306}`);
-
-        const sequelizeApi = new SequelizeApi(this._DATABASE_NAME,process.env.DB_USERNAME,process.env.DB_PASSWORD, options);//.initialize();
-        this._SEQUELIZE = sequelizeApi.initialize();
-     }
-
+    public initializeDrizzle() {
+        const drizzleAPI = new DrizzleAPI(this._DATABASE_NAME,process.env.DB_USERNAME,process.env.DB_PASSWORD,process.env.DB_HOST);//.initialize();
+        this._DRIZZLE = drizzleAPI.initialize()
+    }
     public async processArray(listing) {
         if (listing.length) {
             const listArray = [];
@@ -179,7 +171,7 @@ export class BaseMapper {
 
     public generateJWTToken() {
         const token = nJwt.create({
-            iss: "http://mamboleofc.ca/",  // The URL of your service
+            iss: "http://tomvisions.com/",  // The URL of your service
             sub: uuid.v4(),    // The UID of the user in your system
             scope: "self"
         },process.env.TOKEN_SECRET);
@@ -188,6 +180,33 @@ export class BaseMapper {
 
         return token.compact();
     }
+
+
+    public async getSQLData(preparedSQL, processKeyImage:boolean = false) {
+        const ff = JSON.stringify(preparedSQL)
+        const sqlquery = ff.replace(/"/g, '\\\"').replace(/\\n/g, "")
+
+        const text = JSON.parse(`{"sql": "${sqlquery}"}`)
+        const text2 = `{"sql": "${sqlquery}"}`
+        console.log(text);
+        console.log(text2);
+
+        return await axios.post('https://api-stage.db.tomessa.ca/kofc_golf',
+            text
+        )
+            .then( async (response) => {
+                if (processKeyImage) {
+                    return await this.processImageArray(response.data.data[0])
+                }
+
+                return response.data.data[0]
+            })
+            .catch( (error)=>  {
+                console.log(error);
+            });
+    }
+
+
 
     public checkAuthenication(tokenHeader = undefined) {
         if (!tokenHeader) {
@@ -217,7 +236,7 @@ export class BaseMapper {
         this._DATABASE_NAME = value;
     }
 
-    get SEQUELIZE() {
-        return this._SEQUELIZE;
+    get DRIZZLE() {
+        return this._DRIZZLE;
     }
 }

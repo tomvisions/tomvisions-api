@@ -1,12 +1,12 @@
-"use strict";
-import {Gallery, GalleryTag, Tag} from "../models/";
-//import {gallery as Gallery, image as Image} from "../models/";
+ "use strict";
+import {gallery, galleryTag, tag} from "../models/";
+//import {gallery as Gallery, image} from "../models/";
 import {BaseMapper, paramsOptions} from '.';
 import moment from "moment";
+ import { eq, and , sql, count} from 'drizzle-orm';
+
 import {hasSubscribers} from "diagnostics_channel";
 import * as uuid from 'uuid';
-import {Image} from "../models/";
-import {SequelizeApi} from "../db/Sequelize";
 
 export class GalleryMapper extends BaseMapper {
     private _PARAMS_ID: string = 'id';
@@ -18,44 +18,22 @@ export class GalleryMapper extends BaseMapper {
     constructor() {
         super();
         this.DATABASE_NAME = 'photo_gallery';
-        this.initalizeSequelize()
-        this.initializeGallery();
+        this.initializeDrizzle()
+
     }
 
     public async getAllGalleries(params: paramsOptions) { //: Promise<string[] | string> {
         try {
-            console.log(params);
             const offset = ((params.pageIndex - 1) * params.pageSize);
 
-            const galleryConfig = {
-                attributes: {exclude: ['ImageId', 'GalleryTagTagId']},
-                offset: offset,
-                limit: params.pageSize,
-            }
-            return await Gallery.findAll(galleryConfig).then(galleries => {
-                return this.processArray(galleries);
-            }).catch(err => {
-                console.log('the error');
-                console.log(err);
-                return err;
-            })
+            const gallerySQL = this.DRIZZLE.select().from(gallery).offset(offset).limit(params.pageSize);
+            return this.processArray(gallerySQL.toSQL())
+
         } catch (error) {
 
             return error.toString();
         }
     }
-
-    private async initializeGallery() {
-        try {
-            const tag = await Tag.initialize(this.SEQUELIZE);
-            const galleryTag = GalleryTag.initialize(this.SEQUELIZE, tag);
-            Gallery.initialize(this.SEQUELIZE, tag, galleryTag);
-        } catch (error) {
-            console.log(error);
-
-        }
-    }
-
 
     /**
      *
@@ -64,14 +42,10 @@ export class GalleryMapper extends BaseMapper {
      */
     public async updateGallery(options: paramsOptions, body) {
         try {
-            const gallery = await this.getGalleryById(options);
-            console.log('the gallery');
-            console.log(gallery);
-            gallery.description = body.description
-            gallery.save();
+            this.DRIZZLE.update(gallery).set({description:body.description}).where(eq(gallery.id, options.id))
 
 
-            await this.deleteGalleryTagsByParams({where: {GalleryId: options.id}})
+            await this.deleteGalleryTagsByParams({GalleryId: options.id})
 
             body.tags.map(async (tag) => {
                 console.log('the tag');
@@ -84,20 +58,31 @@ export class GalleryMapper extends BaseMapper {
 
             return true;
         } catch (error) {
-            return error.toString();
+            return error.toString()
         }
+    }
+
+    private async getGalleryTag(options) {
+        const getGalleryTagSQL = this.DRIZZLE.select().from(galleryTag).where(and(eq(galleryTag.GalleryId, options.GalleryId), eq(galleryTag.TagId, options.TagId)))
+
+        return await this.getSQLData(getGalleryTagSQL.toSQL())
+
     }
 
     private async createGalleryTag(GalleryId, TagId) {
         try {
-            const tag = {
-                GalleryId: GalleryId,
-                TagId: TagId,
-                createdAt: moment().format('YYYY-MM-DD'),
-                updatedAt: moment().format('YYYY-MM-DD'),
-            };
 
-            return await GalleryTag.findOrCreate({where: [{GalleryId: GalleryId}, {TagId: TagId}], defaults: tag});
+            const options = {
+                GalleryId: GalleryId,
+                    TagId: TagId,
+            }
+            if (await this.getGalleryTag(options)) {
+                return
+            }
+
+            const createGalleryTagSQL = this.DRIZZLE.insert(galleryTag).values(options)
+
+            return this.getSQLData(createGalleryTagSQL.toSQL())
         } catch (error) {
             console.log('the error');
             console.log(error);
@@ -107,7 +92,9 @@ export class GalleryMapper extends BaseMapper {
 
     private async deleteGalleryTagsByParams(where) {
         try {
-            await GalleryTag.destroy(where);
+            const deleteGalleryTagsSQL = this.DRIZZLE.delete(galleryTag).where(where)
+
+            await this.getSQLData(deleteGalleryTagsSQL.toSQL())
 
             return true;
         } catch (error) {
@@ -125,26 +112,10 @@ export class GalleryMapper extends BaseMapper {
     public async getGalleryById(options: paramsOptions) {
         try {
             console.log('get gallery');
+            const gallerySQL = this.DRIZZLE.select().from(gallery).where(eq(gallery.id,options.id))
 
-            const galleryParams = {
-                include: [
-                    {
-                        Model: Tag,
-                        association: Gallery.Tag,
-                        required: false
-                    },
-                ],
-                where: {id: options.id},
-                attributes: {exclude: ['ImageId', 'GalleryTagTagId']},
-            }
+            return this.getSQLData(gallerySQL.toSQL())
 
-            return await Gallery.findOrCreate(galleryParams).then(data => {
-
-                return data[0];
-            }).catch(err => {
-
-                return err;
-            })
         } catch (error) {
             return error.toString();
         }

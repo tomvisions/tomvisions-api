@@ -1,58 +1,10 @@
-"use strict";
+import { mysqlTable, serial, varchar, int, boolean, DatetimeFsp, MySqlTimestamp, timestamp } from 'drizzle-orm/mysql-core';
 
-//import { GalleryTag } from "./GalleryTag";
-
-const {DataTypes, Model} = require('../db');
-
-class Tag extends Model
-{
-    /**
-     *
-     * @param sequelize
-     */
-    public static initialize(sequelize) {
-         return this.init({
-            id: {
-                type: DataTypes.STRING,
-                primaryKey: true
-            },
-            name: {
-                type: DataTypes.STRING,
-            },
-            description: {
-                type: DataTypes.STRING,
-            },
-            createdAt: {
-                type: DataTypes.DATE,
-            },
-            updatedAt: {
-                type: DataTypes.DATE,
-            }
-        }, {
-            modelName: 'Tag', sequelize: sequelize, tableName:"tag"
-        });
-    }
-}
-/*
-Tag.init({
-    id: {
-        type: DataTypes.STRING,
-        primaryKey: true
-    },
-    name: {
-        type: DataTypes.STRING,
-    },
-    description: {
-        type: DataTypes.STRING,
-    },
-    createdAt: {
-        type: DataTypes.DATE,
-    },
-    updatedAt: {
-        type: DataTypes.DATE,
-    }
-}, {
-    modelName: 'Tag', sequelize: sequelize, tableName:"tag"
-});
-*/
-export {Tag}
+// Define your schema
+export const tag = mysqlTable('tag', {
+    id: varchar('name', {length: 20}).primaryKey(),
+    name: varchar('name', {length: 255}).notNull(),
+    description: varchar('description', {length: 255}).notNull(),
+//    createdAt:timestamp().defaultNow(),
+    //  updatedAt: timestamp().defaultNow(),
+})

@@ -1,7 +1,9 @@
 import { BaseMapper } from ".";
 import moment from "moment";
-import {Tag, GalleryTag} from "../models";
+import {tag, galleryTag} from "../models";
 import * as uuid from 'uuid';
+import { eq, and , sql, count} from 'drizzle-orm';
+
 
 export class TagMapper extends BaseMapper {
     private _PARAMS_NAME: string = 'name';
@@ -12,27 +14,19 @@ export class TagMapper extends BaseMapper {
     constructor() {
         super();
         this.DATABASE_NAME = 'photo_gallery';
-        this.initalizeSequelize()
-        this.initializeTag();
-    }
-
-
-    private async initializeTag() {
-        Tag.initialize(this.SEQUELIZE);
-    }
+        this.initializeDrizzle()    }
 
     public async createTag(params) { //: Promise<string[] | string> {
 
         try {
-            const tag = {
+
+            const tagSQL = this.DRIZZLE.insert(tag).values({
                 id: params.id,
                 name: params.name,
-                description: params.description,
-                createdAt: moment().format('YYYY-MM-DD'),
-                updatedAt: moment().format('YYYY-MM-DD'),
-            };
+                description: params.description
+            })
 
-            return await Tag.findOrCreate({ where: { name: params.name }, defaults: tag });
+            return this.getSQLData(tagSQL.toSQL())
         } catch (error) {
             console.log(error);
             return error.toString();
@@ -47,28 +41,9 @@ export class TagMapper extends BaseMapper {
     public async getAllTagsForGallery(options) {
         try {
 
+            const tagsForGallerySQL = this.DRIZZLE.select().innerJoin(galleryTag, eq(tag.id, galleryTag.TagId)).from(tag).where(eq(galleryTag.GalleryId, options.gallery_id))
 
-            const gallery = {
-                include: [{
-                    model: GalleryTag,
-                    association: GalleryTag.Tag,
-                    required: true
-                }],
-                where: {
-                    '$gallery_tag.gallery_id$': options.gallery_id
-                },
-                //  'gallery_tag.gallery': '975f63c6-8a0f-4536-a126-ffdde09c217c'
-                //  group: ['gallery_tag.tag_id']
-
-            }
-            //            console.log('the gallery');
-            //          console.log(gallery);
-
-            return await Tag.findAll(gallery).then(data => {
-                return data[0];
-            }).catch(err => {
-                return err;
-            })
+            return this.getSQLData(tagsForGallerySQL.toSQL())
         } catch (error) {
             console.log(`Could not fetch gallery ${error}`)
         }
@@ -80,18 +55,10 @@ export class TagMapper extends BaseMapper {
         try {
 
             const offset = ((params.pageIndex - 1) * params.pageSize)
-            
-            const tagConfig = {
-                offset: offset,
-                limit: params.pageSize,
 
-            }
+            const tagsSQL = this.DRIZZLE.select().from(tag).offset(offset).limit(params.pageSize)
 
-            return await Tag.findAll(tagConfig).then(images => {
-                return this.processArray(images);
-            }).catch(err => {
-                return err;
-            })
+            return this.processArray(this.getSQLData(tagsSQL.toSQL()));
         } catch (error) {
             console.log(error);
             return error.toString();

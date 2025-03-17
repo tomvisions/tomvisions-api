@@ -1,5 +1,5 @@
 "use strict";
-import {Image} from "../models/ImageWedding";
+import {imageWedding} from "../models/ImageWedding";
 //import {gallery as Gallery, image as Image} from "../models/";
 import {BaseMapper, paramsOptions} from '.';
 
@@ -13,33 +13,16 @@ export class WeddingMapper extends BaseMapper {
     constructor() {
         super();
         this.DATABASE_NAME = 'wedding';
-        this.initalizeSequelize()
-        this.initializeWedding();
+        this.initializeDrizzle()
     }
-
-
-    private async initializeWedding() {
-        Image.initialize(this.SEQUELIZE);
-    }
-
 
     public async getAllImages(params: paramsOptions) { //: Promise<string[] | string> {
         try {
             const offset = ((params.pageIndex - 1) * params.pageSize);
 
-            const galleryConfig = {
-                attributes: {exclude: ['ImageId', 'GalleryTagTagId']},
-                offset: offset,
-                limit: params.pageSize,
-            }
+            const imagesSQL = this.DRIZZLE.select().from(imageWedding).offset(offset).limit(params.pageSize)
 
-            return await Image.findAll(galleryConfig).then(galleries => {
-                return this.processArray(galleries);
-            }).catch(err => {
-                console.log('the error');
-                console.log(err);
-                return err;
-            })
+            return this.getSQLData(this.processArray(imagesSQL.toSQL()))
         } catch (error) {
 
             return error.toString();
