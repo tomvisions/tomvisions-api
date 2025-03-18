@@ -1,7 +1,7 @@
 import { BaseMapper } from ".";
 import {gallery, galleryTag, image, tag} from "../models";
 import { paramsOptions } from ".";
-import { eq, and , sql, count} from 'drizzle-orm';
+import { eq, and , sql, count, isNull} from 'drizzle-orm';
 
 //import { sequelize } from "../db";
 
@@ -81,7 +81,6 @@ export class ImageMapper extends BaseMapper {
                 description: image.description,
                 active: image.active,
                 orientation: image.orientation,
-                order: image.order,
             }).from(image).where(eq(image.active, 1))
 
             return this.processArray(this.getSQLData(images.toSQL()))
@@ -138,7 +137,6 @@ export class ImageMapper extends BaseMapper {
                 description: image.description,
                 active: image.active,
                 orientation: image.orientation,
-                order: image.order,
                 TagsId: sql<string>`(SELECT JSON_ARRAYAGG(JSON_OBJECT('TagId', ${galleryTag.TagId}))
                                     FROM ${galleryTag}
                                     where ${galleryTag.GalleryId} = ${image.GalleryId})`.as('TagsId')
@@ -151,11 +149,11 @@ export class ImageMapper extends BaseMapper {
                 imagesByGallery.where(eq(image.primaryImage, 1));
                 //= sqls.concat(`WHERE (\`Image\`.\`primaryImage\` = 1) AND (gallery.viewing  = 1 OR gallery.viewing = 0)`);
             } else {
-                imagesByGallery.where(and(eq(image.primaryImage, 1), eq(gallery.code, null)));
+                imagesByGallery.where(and(eq(image.primaryImage, 1), isNull(gallery.code)));
 
             }
 
-            return this.processImageArray(this.getSQLData(imagesByGallery.toSQL(), true))
+            return this.getSQLData(imagesByGallery.toSQL(), true)
 
 
         } catch (error) {
@@ -183,7 +181,6 @@ export class ImageMapper extends BaseMapper {
                 description: image.description,
                 active: image.active,
                 orientation: image.orientation,
-                order: image.order,
                 TagsId: sql<string>`(SELECT JSON_ARRAYAGG(JSON_OBJECT('TagId', ${galleryTag.TagId}))
                                     FROM ${galleryTag}
                                     where ${galleryTag.GalleryId} = ${image.GalleryId})`.as('TagsId')
@@ -193,7 +190,7 @@ export class ImageMapper extends BaseMapper {
                 )).offset(offset).limit(options.pageSize)
 
 
-            const test = this.processArray(this.getSQLData(imagesByGallery.toSQL()))
+            const test = this.getSQLData(imagesByGallery.toSQL())
             return test
 
         } catch (error) {

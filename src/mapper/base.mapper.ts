@@ -74,8 +74,7 @@ export class BaseMapper {
                
                 listArray.push(item);
             }
-            console.log('the list')
-            console.log(listArray);    
+
             return listArray;
         }
 
@@ -153,8 +152,7 @@ export class BaseMapper {
         } else {
             // Paginate the results by size
          //   list = listClone.slice(begin, end);
-            console.log('the final list');
-            console.log(list);
+
             // Prepare the pagination mock-api
             pagination = {
                 total    : listLength,
@@ -188,14 +186,17 @@ export class BaseMapper {
 
         const text = JSON.parse(`{"sql": "${sqlquery}"}`)
         const text2 = `{"sql": "${sqlquery}"}`
+        console.log("the text")
         console.log(text);
         console.log(text2);
+        console.log(`https://api-stage.db.tomessa.ca/${this._DATABASE_NAME}`);
 
-        return await axios.post('https://api-stage.db.tomessa.ca/kofc_golf',
+        return await axios.post(`https://api-stage.db.tomessa.ca/${this._DATABASE_NAME}`,
             text
         )
             .then( async (response) => {
                 if (processKeyImage) {
+               //     console.log(response.data)
                     return await this.processImageArray(response.data.data[0])
                 }
 

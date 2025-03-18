@@ -10,7 +10,6 @@ export const image = mysqlTable('image', {
     description: varchar('description', {length: 255}),
     active: int('active'),
     orientation: int('orientation'),
-    order: int('order'),
 //    createdAt:timestamp().defaultNow(),
     //  updatedAt: timestamp().defaultNow(),
 })

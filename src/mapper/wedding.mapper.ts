@@ -22,7 +22,8 @@ export class WeddingMapper extends BaseMapper {
 
             const imagesSQL = this.DRIZZLE.select().from(imageWedding).offset(offset).limit(params.pageSize)
 
-            return this.getSQLData(this.processArray(imagesSQL.toSQL()))
+            console.log(imagesSQL.toSQL());
+            return this.getSQLData(imagesSQL.toSQL())
         } catch (error) {
 
             return error.toString();
