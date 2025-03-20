@@ -190,7 +190,7 @@ Resources:
             Description: Rule to ping Lambda function every 30 minutes to keep it warm
             Targets:
                 - Id: TargetFunction
-                  Arn: !GetAtt MyFunction.Arn
+                  Arn: !GetAtt ExpressLambdaFunction.Arn
                   Input: '{"source": "warmup-ping"}'
 
 
