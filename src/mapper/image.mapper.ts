@@ -2,6 +2,7 @@ import { BaseMapper } from ".";
 import {gallery, galleryTag, image, tag} from "../models";
 import { paramsOptions } from ".";
 import { eq, and , sql, count, isNull} from 'drizzle-orm';
+import moment from "moment/moment";
 
 //import { sequelize } from "../db";
 
@@ -128,6 +129,9 @@ export class ImageMapper extends BaseMapper {
 
     public async getAllPrimaryImages(options: paramsOptions) { //: Promise<string[] | string> {
         try {
+            console.log(3)
+            console.log(moment().format('yyyy-mm-dd:hh:mm:ss'))
+
             const imagesByGallery = this.DRIZZLE.select({
                 id: image.id,
                 key: image.key,
@@ -145,6 +149,9 @@ export class ImageMapper extends BaseMapper {
 
             //.where(eq(image.active, 1))
 
+            console.log(4)
+            console.log(moment().format('yyyy-mm-dd:hh:mm:ss'))
+
             if (options.code) {
                 imagesByGallery.where(eq(image.primaryImage, 1));
                 //= sqls.concat(`WHERE (\`Image\`.\`primaryImage\` = 1) AND (gallery.viewing  = 1 OR gallery.viewing = 0)`);
@@ -152,8 +159,11 @@ export class ImageMapper extends BaseMapper {
                 imagesByGallery.where(and(eq(image.primaryImage, 1), isNull(gallery.code)));
 
             }
+            console.log(5)
+            console.log(moment().format('yyyy-mm-dd:hh:mm:ss'))
 
-            return this.getSQLData(imagesByGallery.toSQL(), true)
+            return this.processImageArray(await imagesByGallery);
+//            return this.getSQLData(imagesByGallery.toSQL(), true)
 
 
         } catch (error) {

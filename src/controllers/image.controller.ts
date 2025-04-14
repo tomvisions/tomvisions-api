@@ -1,4 +1,5 @@
 import { imageMapper, paramsOptions } from "../mapper";
+import moment from "moment";
 
 export class ImageController {
     /**
@@ -146,18 +147,31 @@ export class ImageController {
             //        if (!galleryMapper.checkAuthenication(req.headers.authorization)) {
             //        return res.status(500).json({error: 'Not Authorized to access the API'})
             //      }
+            console.log(1)
+            console.log(moment().format('yyyy-mm-dd:hh:mm:ss'))
+
+
             const options: paramsOptions = { code: null };
             if (req.params.code) {
                 options.code = req.params.code;
             }
 
+            console.log(2)
+            console.log(moment().format('yyyy-mm-dd:hh:mm:ss'))
+
             const images = await imageMapper.getAllPrimaryImages(options);
+
+            console.log(6)
+            console.log(moment().format('yyyy-mm-dd:hh:mm:ss'))
 
             if (typeof images === 'string') {
                 return res.status(500).json({ errors_string: images })
             }
 
             //   const paginationResults = imageMapper.prepareListResults(galleries, req.query);
+
+            console.log(7)
+            console.log(moment().format('yyyy-mm-dd:hh:mm:ss'))
 
             return res.status(200).json({ "images": images });
 
