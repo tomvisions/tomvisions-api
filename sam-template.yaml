@@ -85,7 +85,7 @@ Resources:
                     DB_USERNAME: !Ref DbUserName
                     DB_PASSWORD: !Ref DbPassword
                     NODE_ENV: !Ref NodeEnv
-            MemorySize: 1024
+            MemorySize: 2048
             Timeout: 30
             Events:
                 Mail:
